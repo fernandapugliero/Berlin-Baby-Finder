@@ -5,6 +5,7 @@ import { ArrowLeft, Check, Trash2, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
+import { de } from "date-fns/locale";
 import { fetchAllActivities, approveActivity, deleteActivity } from "@/lib/activity-queries";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
@@ -23,18 +24,18 @@ const Admin = () => {
     mutationFn: approveActivity,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-activities"] });
-      toast.success("Activity approved");
+      toast.success("Aktivität freigegeben");
     },
-    onError: (e) => toast.error(`Failed: ${e.message}`),
+    onError: (e) => toast.error(`Fehler: ${e.message}`),
   });
 
   const deleteMutation = useMutation({
     mutationFn: deleteActivity,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-activities"] });
-      toast.success("Activity deleted");
+      toast.success("Aktivität gelöscht");
     },
-    onError: (e) => toast.error(`Failed: ${e.message}`),
+    onError: (e) => toast.error(`Fehler: ${e.message}`),
   });
 
   const filtered = activities?.filter((a) =>
@@ -42,8 +43,8 @@ const Admin = () => {
   );
 
   return (
-    <div className="min-h-screen pb-8">
-      <header className="px-4 pt-6 pb-4 flex items-center gap-3">
+    <div className="min-h-screen pb-8 bg-muted/30">
+      <header className="px-5 pt-6 pb-4 flex items-center gap-3 bg-card border-b border-border">
         <Button
           variant="ghost"
           size="icon"
@@ -53,12 +54,12 @@ const Admin = () => {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="font-display text-xl font-bold">Admin Panel</h1>
-          <p className="text-xs text-muted-foreground">Review imported events</p>
+          <h1 className="font-display text-xl font-bold">Admin</h1>
+          <p className="text-xs text-muted-foreground">Events verwalten</p>
         </div>
       </header>
 
-      <div className="px-4 space-y-4">
+      <div className="px-5 py-4 space-y-4">
         <div className="flex gap-2">
           <Button
             variant={!showApproved ? "default" : "outline"}
@@ -67,7 +68,7 @@ const Admin = () => {
             onClick={() => setShowApproved(false)}
           >
             <EyeOff className="w-3.5 h-3.5" />
-            Pending
+            Ausstehend
           </Button>
           <Button
             variant={showApproved ? "default" : "outline"}
@@ -76,7 +77,7 @@ const Admin = () => {
             onClick={() => setShowApproved(true)}
           >
             <Eye className="w-3.5 h-3.5" />
-            Approved
+            Freigegeben
           </Button>
         </div>
 
@@ -92,6 +93,7 @@ const Admin = () => {
               <div
                 key={activity.id}
                 className="bg-card rounded-2xl p-4 border border-border space-y-2"
+                style={{ boxShadow: "var(--shadow-card)" }}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -102,11 +104,11 @@ const Admin = () => {
                       {activity.location_name} · {activity.district}
                     </p>
                     <p className="text-xs text-muted-foreground">
-                      {format(new Date(activity.start_time), "dd MMM yyyy HH:mm")}
+                      {format(new Date(activity.start_time), "dd. MMM yyyy HH:mm", { locale: de })}
                     </p>
                   </div>
                   <Badge variant={activity.is_approved ? "default" : "secondary"}>
-                    {activity.is_approved ? "Live" : "Pending"}
+                    {activity.is_approved ? "Live" : "Ausstehend"}
                   </Badge>
                 </div>
 
@@ -125,7 +127,7 @@ const Admin = () => {
                       disabled={approveMutation.isPending}
                     >
                       <Check className="w-3.5 h-3.5" />
-                      Approve
+                      Freigeben
                     </Button>
                   )}
                   <Button
@@ -136,7 +138,7 @@ const Admin = () => {
                     disabled={deleteMutation.isPending}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
-                    Delete
+                    Löschen
                   </Button>
                 </div>
               </div>
@@ -144,11 +146,11 @@ const Admin = () => {
           </div>
         ) : (
           <EmptyState
-            title={showApproved ? "No approved events" : "No pending events"}
+            title={showApproved ? "Keine freigegebenen Events" : "Keine ausstehenden Events"}
             description={
               showApproved
-                ? "Approved events will appear here"
-                : "Import events and they'll show up here for review"
+                ? "Freigegebene Events erscheinen hier"
+                : "Importierte Events werden hier zur Überprüfung angezeigt"
             }
           />
         )}

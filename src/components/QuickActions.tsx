@@ -9,40 +9,46 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
   const actions = [
     {
       key: "now" as const,
-      label: "Now",
-      sublabel: "Next 3 hours",
+      label: "Jetzt",
+      sublabel: "Aktivitäten in den nächsten 3 Stunden",
       icon: Zap,
-      iconColor: "text-accent",
-    },
-    {
-      key: "today_afternoon" as const,
-      label: "Today PM",
-      sublabel: "12:00–18:00",
-      icon: Sun,
       iconColor: "text-primary",
     },
     {
+      key: "today_afternoon" as const,
+      label: "Heute Nachmittag",
+      sublabel: "12:00 – 18:00",
+      icon: Sun,
+      iconColor: "text-accent-foreground",
+    },
+    {
       key: "tomorrow_morning" as const,
-      label: "Tomorrow AM",
-      sublabel: "08:00–13:00",
+      label: "Morgen Vormittag",
+      sublabel: "08:00 – 13:00",
       icon: Sunrise,
       iconColor: "text-secondary-foreground",
     },
   ];
 
   return (
-    <div className="grid grid-cols-3 gap-3">
+    <div className="space-y-3">
       {actions.map((action) => (
         <button
           key={action.key}
-          className="quick-action-btn"
+          className="quick-action-btn w-full"
           onClick={() => onSelect(action.key)}
         >
-          <action.icon className={`w-6 h-6 ${action.iconColor}`} />
-          <span className="font-display font-semibold text-sm text-card-foreground">
-            {action.label}
-          </span>
-          <span className="text-[11px] text-muted-foreground">{action.sublabel}</span>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <action.icon className={`w-5 h-5 ${action.iconColor}`} />
+            </div>
+            <div className="text-left">
+              <span className="font-display font-semibold text-base text-card-foreground block">
+                {action.label}
+              </span>
+              <span className="text-sm text-muted-foreground">{action.sublabel}</span>
+            </div>
+          </div>
         </button>
       ))}
     </div>

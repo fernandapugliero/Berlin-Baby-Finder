@@ -1,19 +1,14 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Search, Settings } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { QuickActions } from "@/components/QuickActions";
-import { SearchFiltersPanel } from "@/components/SearchFilters";
+import { FilterChips } from "@/components/FilterChips";
 import { ActivityCard } from "@/components/ActivityCard";
 import { EmptyState } from "@/components/EmptyState";
 import { searchActivities } from "@/lib/activity-queries";
 import type { SearchFilters } from "@/lib/types";
 
 const Index = () => {
-  const navigate = useNavigate();
   const [filters, setFilters] = useState<SearchFilters>({ timeRange: "now" });
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
   const { data: activities, isLoading } = useQuery({
@@ -28,70 +23,68 @@ const Index = () => {
   };
 
   const timeLabels: Record<string, string> = {
-    now: "Happening now",
-    today_afternoon: "Today afternoon",
-    tomorrow_morning: "Tomorrow morning",
-    custom: "Custom date",
+    now: "Jetzt verfügbar",
+    today_afternoon: "Heute Nachmittag",
+    tomorrow_morning: "Morgen Vormittag",
+    custom: "Ergebnisse",
   };
 
   return (
-    <div className="min-h-screen pb-8">
+    <div className="min-h-screen pb-10">
       {/* Header */}
-      <header className="px-4 pt-6 pb-4 flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-bold tracking-tight">
-            BabyBerlin
-          </h1>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Find baby-friendly activities near you
-          </p>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full"
-          onClick={() => navigate("/admin")}
-        >
-          <Settings className="w-5 h-5" />
-        </Button>
+      <header className="px-5 pt-10 pb-2">
+        <h1 className="font-display text-3xl font-bold tracking-tight text-foreground">
+          Rausi
+        </h1>
       </header>
 
-      <div className="px-4 space-y-6">
-        {/* Quick Actions */}
+      <div className="px-5 space-y-8">
+        {/* Hero */}
         <section>
-          <h2 className="font-display font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-3">
-            Quick search
+          <h2 className="font-display font-bold text-2xl leading-snug text-foreground">
+            Was machen mit Kindern in Berlin?
           </h2>
-          <QuickActions onSelect={handleQuickAction} />
+          <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
+            Finde Aktivitäten in deinem Kiez – genau dann, wenn du raus willst.
+          </p>
         </section>
 
-        {/* Filters */}
-        <section className="flex items-start gap-2">
-          <SearchFiltersPanel
-            filters={filters}
-            onChange={(f) => {
-              setFilters(f);
-              if (hasSearched) setHasSearched(true);
-            }}
-            open={filtersOpen}
-            onToggle={() => setFiltersOpen(!filtersOpen)}
-          />
-          {!hasSearched && (
-            <Button
-              size="sm"
-              className="rounded-full gap-2"
-              onClick={() => setHasSearched(true)}
-            >
-              <Search className="w-4 h-4" />
-              Search
-            </Button>
-          )}
-        </section>
+        {/* Quick Actions */}
+        {!hasSearched && (
+          <section>
+            <QuickActions onSelect={handleQuickAction} />
+          </section>
+        )}
+
+        {/* Filters (always visible once searched) */}
+        {hasSearched && (
+          <section>
+            <FilterChips
+              filters={filters}
+              onChange={(f) => setFilters(f)}
+            />
+          </section>
+        )}
+
+        {/* Quick actions as small row when searched */}
+        {hasSearched && (
+          <section className="flex gap-2 overflow-x-auto -mx-5 px-5 scrollbar-hide pb-1">
+            {(["now", "today_afternoon", "tomorrow_morning"] as const).map((key) => (
+              <button
+                key={key}
+                className={`filter-chip ${filters.timeRange === key ? "active" : ""}`}
+                onClick={() => handleQuickAction(key)}
+              >
+                {({ now: "Jetzt", today_afternoon: "Heute PM", tomorrow_morning: "Morgen VM" } as const)[key]}
+              </button>
+            ))}
+          </section>
+        )}
 
         {/* Results */}
         {hasSearched && (
           <section>
-            <h2 className="font-display font-semibold text-lg mb-3">
+            <h2 className="font-display font-semibold text-lg mb-4">
               {timeLabels[filters.timeRange]}
             </h2>
 
@@ -100,7 +93,7 @@ const Index = () => {
                 {[1, 2, 3].map((i) => (
                   <div
                     key={i}
-                    className="h-48 rounded-2xl bg-muted animate-pulse"
+                    className="h-44 rounded-2xl bg-muted animate-pulse"
                   />
                 ))}
               </div>
@@ -110,17 +103,14 @@ const Index = () => {
                   <div
                     key={activity.id}
                     className="animate-fade-in"
-                    style={{ animationDelay: `${i * 80}ms` }}
+                    style={{ animationDelay: `${i * 60}ms` }}
                   >
                     <ActivityCard activity={activity} />
                   </div>
                 ))}
               </div>
             ) : (
-              <EmptyState
-                title="No activities found"
-                description="Try a different time window or adjust your filters to find something fun!"
-              />
+              <EmptyState />
             )}
           </section>
         )}

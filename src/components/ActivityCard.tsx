@@ -1,79 +1,73 @@
-import { format } from "date-fns";
-import { MapPin, Clock, Baby, ExternalLink } from "lucide-react";
+import { MapPin, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import type { Activity } from "@/lib/types";
+import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon } from "@/lib/utils";
 
 interface ActivityCardProps {
   activity: Activity;
 }
 
 export function ActivityCard({ activity }: ActivityCardProps) {
+  const navigate = useNavigate();
   const startTime = new Date(activity.start_time);
   const endTime = activity.end_time ? new Date(activity.end_time) : null;
+  const { label: statusLabel, type: statusType } = getRelativeTimeLabel(startTime, endTime);
+  const categoryIcon = getCategoryIcon(activity.category);
 
   return (
-    <div className="card-activity">
-      {activity.image_url && (
-        <div className="h-36 overflow-hidden">
-          <img
-            src={activity.image_url}
-            alt={activity.title}
-            className="w-full h-full object-cover"
-            loading="lazy"
-          />
-        </div>
-      )}
-      <div className="p-4 space-y-3">
-        <div className="flex items-start justify-between gap-2">
-          <h3 className="font-display font-semibold text-base leading-tight text-card-foreground">
-            {activity.title}
-          </h3>
-          {activity.registration_url && (
-            <a
-              href={activity.registration_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="shrink-0 text-primary hover:text-primary/80"
-            >
-              <ExternalLink className="w-4 h-4" />
-            </a>
-          )}
-        </div>
+    <div
+      className="card-activity cursor-pointer"
+      onClick={() => navigate(`/activity/${activity.id}`)}
+      role="button"
+      tabIndex={0}
+    >
+      <div className="p-5 space-y-3">
+        {/* Status badge */}
+        {statusLabel && (
+          <span className={statusType === "live" ? "chip chip-live" : "chip chip-soon"}>
+            {statusType === "live" ? "🟢 " : "⏳ "}{statusLabel}
+          </span>
+        )}
 
+        {/* Title */}
+        <h3 className="font-display font-semibold text-base leading-tight text-card-foreground">
+          {categoryIcon && <span className="mr-1.5">{categoryIcon}</span>}
+          {activity.title}
+        </h3>
+
+        {/* Description */}
         {activity.description && (
           <p className="text-sm text-muted-foreground line-clamp-2">
             {activity.description}
           </p>
         )}
 
-        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <Clock className="w-3.5 h-3.5 shrink-0" />
-          <span>
-            {format(startTime, "HH:mm")}
-            {endTime && ` – ${format(endTime, "HH:mm")}`}
-            {" · "}
-            {format(startTime, "EEE, dd MMM")}
-          </span>
+        {/* Time */}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Clock className="w-4 h-4 shrink-0 text-primary/60" />
+          <span>{formatActivityTime(startTime, endTime)}</span>
         </div>
 
-        <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-          <MapPin className="w-3.5 h-3.5 shrink-0" />
+        {/* Location */}
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <MapPin className="w-4 h-4 shrink-0 text-primary/60" />
           <span className="truncate">{activity.location_name}</span>
         </div>
 
-        <div className="flex flex-wrap gap-1.5">
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1.5 pt-1">
           <span className={activity.is_free ? "chip chip-free" : "chip chip-paid"}>
-            {activity.is_free ? "Free" : activity.price_info || "Paid"}
+            {activity.is_free ? "Kostenlos" : activity.price_info || "Kostenpflichtig"}
           </span>
           <span className="chip chip-district">{activity.district}</span>
           {activity.age_groups.map((age) => (
             <span key={age} className="chip chip-age">
-              <Baby className="w-3 h-3 mr-1" />
-              {age}
+              {getAgeLabel(age)}
             </span>
           ))}
           {activity.registration_required && (
             <span className="chip bg-destructive/10 text-destructive">
-              Registration
+              Anmeldung nötig
             </span>
           )}
         </div>
