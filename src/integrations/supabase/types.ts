@@ -14,16 +14,139 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      activities: {
+        Row: {
+          address: string | null
+          age_groups: Database["public"]["Enums"]["baby_age_group"][]
+          category: string | null
+          created_at: string
+          description: string | null
+          district: Database["public"]["Enums"]["berlin_district"]
+          end_time: string | null
+          id: string
+          image_url: string | null
+          is_approved: boolean
+          is_free: boolean
+          latitude: number | null
+          location_name: string
+          longitude: number | null
+          price_info: string | null
+          recurrence_rule: string | null
+          recurring: boolean | null
+          registration_required: boolean
+          registration_url: string | null
+          source: string | null
+          source_url: string | null
+          start_time: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          age_groups?: Database["public"]["Enums"]["baby_age_group"][]
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          district: Database["public"]["Enums"]["berlin_district"]
+          end_time?: string | null
+          id?: string
+          image_url?: string | null
+          is_approved?: boolean
+          is_free?: boolean
+          latitude?: number | null
+          location_name: string
+          longitude?: number | null
+          price_info?: string | null
+          recurrence_rule?: string | null
+          recurring?: boolean | null
+          registration_required?: boolean
+          registration_url?: string | null
+          source?: string | null
+          source_url?: string | null
+          start_time: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          age_groups?: Database["public"]["Enums"]["baby_age_group"][]
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          district?: Database["public"]["Enums"]["berlin_district"]
+          end_time?: string | null
+          id?: string
+          image_url?: string | null
+          is_approved?: boolean
+          is_free?: boolean
+          latitude?: number | null
+          location_name?: string
+          longitude?: number | null
+          price_info?: string | null
+          recurrence_rule?: string | null
+          recurring?: boolean | null
+          registration_required?: boolean
+          registration_url?: string | null
+          source?: string | null
+          source_url?: string | null
+          start_time?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      baby_age_group:
+        | "0-6 months"
+        | "6-12 months"
+        | "1-2 years"
+        | "2-3 years"
+        | "3+ years"
+      berlin_district:
+        | "Mitte"
+        | "Friedrichshain-Kreuzberg"
+        | "Pankow"
+        | "Charlottenburg-Wilmersdorf"
+        | "Spandau"
+        | "Steglitz-Zehlendorf"
+        | "Tempelhof-Schöneberg"
+        | "Neukölln"
+        | "Treptow-Köpenick"
+        | "Marzahn-Hellersdorf"
+        | "Lichtenberg"
+        | "Reinickendorf"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +273,29 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      baby_age_group: [
+        "0-6 months",
+        "6-12 months",
+        "1-2 years",
+        "2-3 years",
+        "3+ years",
+      ],
+      berlin_district: [
+        "Mitte",
+        "Friedrichshain-Kreuzberg",
+        "Pankow",
+        "Charlottenburg-Wilmersdorf",
+        "Spandau",
+        "Steglitz-Zehlendorf",
+        "Tempelhof-Schöneberg",
+        "Neukölln",
+        "Treptow-Köpenick",
+        "Marzahn-Hellersdorf",
+        "Lichtenberg",
+        "Reinickendorf",
+      ],
+    },
   },
 } as const
