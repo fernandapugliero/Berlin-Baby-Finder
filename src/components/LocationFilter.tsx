@@ -52,11 +52,11 @@ export function LocationFilter({ onNearMe, onSearchLocation, isLocating, activeL
       <div className="flex gap-2">
         <button
           onClick={handleNearMe}
-          disabled={isLocating}
+          disabled={locating || isLocating}
           className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-secondary text-secondary-foreground font-semibold text-sm transition-all active:scale-95 disabled:opacity-50 shrink-0"
         >
           <Navigation className="w-4 h-4" />
-          {isLocating ? "Suche…" : "In der Nähe"}
+          {locating || isLocating ? "Suche…" : "In der Nähe"}
         </button>
         <div className="flex-1 flex gap-1.5">
           <Input
