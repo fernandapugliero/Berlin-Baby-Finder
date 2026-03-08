@@ -100,6 +100,11 @@ let cachedEvents: Activity[] | null = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 10 * 60 * 1000;
 
+export function clearEventCache() {
+  cachedEvents = null;
+  cacheTimestamp = 0;
+}
+
 interface CrawlerOverride {
   event_key: string;
   hidden: boolean;
