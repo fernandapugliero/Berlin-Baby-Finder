@@ -12,6 +12,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { LocationFilter } from "@/components/LocationFilter";
 import { DistrictFilter } from "@/components/DistrictFilter";
 import { HomepagePreview } from "@/components/HomepagePreview";
+import { KindercafeCarousel } from "@/components/KindercafeCarousel";
 import { searchActivities } from "@/lib/activity-queries";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
