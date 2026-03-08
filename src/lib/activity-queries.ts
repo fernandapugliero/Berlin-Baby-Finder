@@ -1,3 +1,4 @@
+import { supabase } from "@/integrations/supabase/client";
 import type { SearchFilters, Activity } from "./types";
 
 const JSON_URL =
