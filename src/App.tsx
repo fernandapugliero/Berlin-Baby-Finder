@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import ActivityDetail from "./pages/ActivityDetail";
 import Admin from "./pages/Admin";
 import EventEinreichen from "./pages/EventEinreichen";
+import KindercafeEinreichen from "./pages/KindercafeEinreichen";
 import UeberRausi from "./pages/UeberRausi";
 import Kontakt from "./pages/Kontakt";
 import Impressum from "./pages/Impressum";
