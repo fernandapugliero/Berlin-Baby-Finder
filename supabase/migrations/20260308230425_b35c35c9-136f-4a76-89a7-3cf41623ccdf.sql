@@ -1,0 +1,1 @@
+DELETE FROM activities WHERE source IS NULL;
