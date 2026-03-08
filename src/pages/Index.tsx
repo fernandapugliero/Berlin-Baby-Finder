@@ -169,7 +169,6 @@ const Index = () => {
                 <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-1 flex items-center gap-1.5">
                   Speichere Aktivitäten und wir erinnern dich rechtzeitig <Bookmark className="w-4 h-4 text-primary inline shrink-0" />
                 </h3>
-                </h3>
                 <p className="text-[13px] text-muted-foreground mt-1">
                   Kostenlos · 10 Sekunden · Kein Spam
                 </p>
