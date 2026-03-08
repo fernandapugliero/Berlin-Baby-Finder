@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import rausiLogo from "@/assets/rausi-logo-v5-yellow.png";
 import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarIcon, Bookmark, Plus } from "lucide-react";
