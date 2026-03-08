@@ -34,11 +34,11 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
   ];
 
   return (
-    <div className="space-y-3">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
       {actions.map((action) => (
         <button
           key={action.key}
-          className={`w-full flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-r ${action.gradient} ${action.textColor} transition-all duration-200 active:scale-[0.97]`}
+          className={`w-full flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-r ${action.gradient} ${action.textColor} transition-all duration-200 active:scale-[0.97] hover:scale-[1.02]`}
           style={{ boxShadow: "var(--shadow-hero)" }}
           onClick={() => onSelect(action.key)}
         >
