@@ -1,7 +1,7 @@
-import { MapPin, Clock, Bookmark, Navigation } from "lucide-react";
+import { MapPin, Clock, Bookmark, Navigation, Repeat } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Activity } from "@/lib/types";
-import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon } from "@/lib/utils";
+import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon, getRecurringDayLabel } from "@/lib/utils";
 import { formatDistance } from "@/lib/activity-queries";
 
 interface ActivityCardProps {
