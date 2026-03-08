@@ -18,7 +18,14 @@ const Admin = () => {
 
   const { data: activities, isLoading } = useQuery({
     queryKey: ["admin-activities"],
-    queryFn: fetchAllActivities,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("activities")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
   });
 
   const approveMutation = useMutation({
