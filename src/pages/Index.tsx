@@ -198,7 +198,32 @@ const Index = () => {
             </section>
           )}
 
-          {/* Compact header when searched */}
+          {/* CTA: Submit event */}
+          {!hasSearched && (
+            <section
+              className="relative rounded-2xl border border-accent/30 bg-card p-5 cursor-pointer group hover:border-accent/50 transition-all"
+              onClick={() => navigate("/event-einreichen")}
+            >
+              <div className="absolute left-0 top-3 bottom-3 w-1 rounded-full bg-accent" />
+              <div className="flex items-center gap-4 pl-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-semibold text-accent tracking-wide uppercase">
+                    Community
+                  </p>
+                  <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-1">
+                    Kennst du ein tolles Event? Reiche es ein!
+                  </h3>
+                  <p className="text-[13px] text-muted-foreground mt-1">
+                    Wir prüfen und veröffentlichen es
+                  </p>
+                </div>
+                <div className="shrink-0 w-10 h-10 rounded-xl bg-accent flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Plus className="w-5 h-5 text-accent-foreground" />
+                </div>
+              </div>
+            </section>
+          )}
+
           {hasSearched && (
             <section className="pt-2">
               <h2 className="font-display font-bold text-2xl leading-tight text-foreground">
