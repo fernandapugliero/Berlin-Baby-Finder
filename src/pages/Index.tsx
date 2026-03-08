@@ -116,7 +116,7 @@ const Index = () => {
               onClick={() => setShowAuthDialog(true)}
               className="text-sm text-primary font-semibold hover:underline transition-colors"
             >
-              Einloggen / Registrieren
+              Anmelden
             </button>
           )}
         </header>
