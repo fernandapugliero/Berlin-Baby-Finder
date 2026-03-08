@@ -81,6 +81,12 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="w-4 h-4 shrink-0 text-primary" />
           <span className="truncate">{activity.location_name}</span>
+          {activity._distance != null && (
+            <span className="flex items-center gap-1 shrink-0 text-secondary font-semibold">
+              <Navigation className="w-3.5 h-3.5" />
+              {formatDistance(activity._distance)}
+            </span>
+          )}
         </div>
 
         {/* Tags */}
