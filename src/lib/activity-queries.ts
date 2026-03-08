@@ -265,9 +265,42 @@ export async function searchActivities(filters: SearchFilters) {
   return withDistance;
 }
 
-export async function fetchAllActivities() {
-  return loadEvents();
+export async function fetchAllActivities(): Promise<Activity[]> {
+  const crawlerEvents = await loadEvents();
+
+  // Also fetch community-submitted events from DB
+  const { data: dbEvents } = await supabase
+    .from("activities")
+    .select("*")
+    .order("start_time", { ascending: true });
+
+  const allEvents = [...crawlerEvents];
+  if (dbEvents) {
+    // Merge DB events (approved ones are visible, unapproved only for admin view)
+    allEvents.push(...dbEvents);
+  }
+
+  // Deduplicate by id
+  const seen = new Set<string>();
+  return allEvents.filter((e) => {
+    if (seen.has(e.id)) return false;
+    seen.add(e.id);
+    return true;
+  });
 }
 
-export async function approveActivity(_id: string) {}
-export async function deleteActivity(_id: string) {}
+export async function approveActivity(id: string) {
+  const { error } = await supabase
+    .from("activities")
+    .update({ is_approved: true })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteActivity(id: string) {
+  const { error } = await supabase
+    .from("activities")
+    .delete()
+    .eq("id", id);
+  if (error) throw error;
+}
