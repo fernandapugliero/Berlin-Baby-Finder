@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarIcon, Bookmark } from "lucide-react";
 import { format } from "date-fns";
