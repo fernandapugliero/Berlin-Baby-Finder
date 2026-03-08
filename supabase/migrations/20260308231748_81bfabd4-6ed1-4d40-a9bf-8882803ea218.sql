@@ -1,0 +1,1 @@
+ALTER TABLE public.crawler_overrides ADD CONSTRAINT crawler_overrides_event_key_unique UNIQUE (event_key);
