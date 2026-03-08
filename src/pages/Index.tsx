@@ -155,21 +155,30 @@ const Index = () => {
         {/* CTA: Sign up to save */}
         {!hasSearched && !user && (
           <section
-            className="rounded-2xl bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 border border-primary/15 p-6 text-center space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+            className="relative overflow-hidden rounded-2xl bg-foreground p-6 cursor-pointer group transition-transform hover:scale-[1.01]"
             onClick={() => setShowAuthDialog(true)}
           >
-            <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center mx-auto">
-              <Bookmark className="w-6 h-6 text-primary" />
+            {/* Decorative gradient blobs */}
+            <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-primary/30 blur-2xl" />
+            <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-accent/30 blur-2xl" />
+
+            <div className="relative flex items-start gap-4">
+              <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center shrink-0 mt-0.5 shadow-lg shadow-primary/30">
+                <Bookmark className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <div className="space-y-1.5 flex-1">
+                <h3 className="font-display font-bold text-base text-background leading-snug">
+                  Speichere Aktivitäten & werde erinnert
+                </h3>
+                <p className="text-sm text-background/60 leading-relaxed">
+                  Kostenlos anmelden — Favoriten merken und rechtzeitig vor dem Start benachrichtigt werden.
+                </p>
+                <span className="inline-flex items-center gap-1 text-sm font-bold text-primary group-hover:gap-2 transition-all pt-1">
+                  Jetzt anmelden
+                  <span className="text-base">→</span>
+                </span>
+              </div>
             </div>
-            <h3 className="font-display font-bold text-lg text-foreground">
-              Aktivitäten speichern & erinnert werden
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
-              Melde dich kostenlos an, speichere deine Lieblings-Aktivitäten und werde rechtzeitig erinnert, bevor sie starten.
-            </p>
-            <span className="inline-block text-sm font-semibold text-primary">
-              Kostenlos anmelden →
-            </span>
           </section>
         )}
 
