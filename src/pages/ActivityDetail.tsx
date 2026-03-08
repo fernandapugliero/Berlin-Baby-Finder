@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Clock, MapPin, ExternalLink, Baby, Tag, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { formatActivityTime, getRelativeTimeLabel, getAgeLabel, getCategoryIcon } from "@/lib/utils";
+import { formatActivityTime, getRelativeTimeLabel, getAgeLabel } from "@/lib/utils";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 
 const ActivityDetail = () => {
