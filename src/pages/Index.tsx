@@ -22,6 +22,7 @@ import { useAuth } from "@/hooks/useAuth";
 import type { SearchFilters } from "@/lib/types";
 
 const Index = () => {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   
   const initialTimeRange = (searchParams.get("t") as SearchFilters["timeRange"]) || "now";
