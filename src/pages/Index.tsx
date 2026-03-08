@@ -8,6 +8,7 @@ import { QuickActions } from "@/components/QuickActions";
 import { FilterChips } from "@/components/FilterChips";
 import { ActivityCard } from "@/components/ActivityCard";
 import { EmptyState } from "@/components/EmptyState";
+import { LocationFilter } from "@/components/LocationFilter";
 import { searchActivities } from "@/lib/activity-queries";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
