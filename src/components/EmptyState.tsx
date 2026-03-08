@@ -1,4 +1,3 @@
-import { CloudOff } from "lucide-react";
 import { KindercafeCarousel } from "./KindercafeCarousel";
 
 interface EmptyStateProps {
@@ -14,10 +13,7 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div className="space-y-8">
-      <div className="flex flex-col items-center justify-center py-12 px-6 text-center">
-        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mb-5">
-          <CloudOff className="w-7 h-7 text-muted-foreground" />
-        </div>
+      <div className="flex flex-col items-center justify-center py-10 px-6 text-center">
         <h3 className="font-display font-semibold text-lg mb-2">{title}</h3>
         {description ? (
           <p className="text-sm text-muted-foreground max-w-xs">{description}</p>
