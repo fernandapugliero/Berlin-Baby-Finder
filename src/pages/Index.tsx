@@ -34,7 +34,8 @@ const Index = () => {
   const [customDate, setCustomDate] = useState<Date | undefined>(initialCustomDate);
   const [isLocating, setIsLocating] = useState(false);
   const [activeLocation, setActiveLocation] = useState<string>();
-  const { toggle, isBookmarked } = useBookmarks();
+  const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
+  const { user, signOut } = useAuth();
 
   const { data: activities, isLoading } = useQuery({
     queryKey: ["activities", filters],
