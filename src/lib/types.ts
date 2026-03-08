@@ -32,7 +32,7 @@ export interface SearchFilters {
   timeRange: "now" | "today" | "tomorrow" | "custom";
   customDate?: Date;
   district?: BerlinDistrict;
-  ageGroup?: BabyAgeGroup;
+  ageGroup?: BabyAgeGroup | string;
   isFree?: boolean;
   registrationRequired?: boolean;
   nearLat?: number;
