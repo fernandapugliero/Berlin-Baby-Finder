@@ -296,16 +296,16 @@ const Index = () => {
           {/* Results */}
           {hasSearched && (
             <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-display font-bold text-lg">
-                  {timeLabels[filters.timeRange]}
-                </h2>
-                {activities && activities.length > 0 && (
+              {activities && activities.length > 0 && (
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="font-display font-bold text-lg">
+                    {timeLabels[filters.timeRange]}
+                  </h2>
                   <span className="text-sm text-muted-foreground font-medium">
                     {activities.length} {activities.length === 1 ? "Ergebnis" : "Ergebnisse"}
                   </span>
-                )}
-              </div>
+                </div>
+              )}
 
               {isLoading ? (
                 <div className="space-y-4">
