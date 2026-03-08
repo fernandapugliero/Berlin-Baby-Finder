@@ -43,6 +43,7 @@ const Index = () => {
   const handleQuickAction = (timeRange: SearchFilters["timeRange"]) => {
     setFilters((f) => ({ ...f, timeRange }));
     setHasSearched(true);
+    setSearchParams({ t: timeRange }, { replace: true });
   };
 
   const handleNearMe = (lat: number, lng: number) => {
