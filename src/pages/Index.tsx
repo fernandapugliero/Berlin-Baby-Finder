@@ -112,27 +112,6 @@ const Index = () => {
           </section>
         )}
 
-        {/* CTA: Sign up to save */}
-        {!hasSearched && !user && (
-          <section
-            className="rounded-2xl bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 border border-primary/15 p-6 text-center space-y-3 cursor-pointer hover:shadow-md transition-shadow"
-            onClick={() => setShowAuthDialog(true)}
-          >
-            <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center mx-auto">
-              <Bookmark className="w-6 h-6 text-primary" />
-            </div>
-            <h3 className="font-display font-bold text-lg text-foreground">
-              Aktivitäten speichern & erinnert werden
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
-              Melde dich kostenlos an, speichere deine Lieblings-Aktivitäten und werde rechtzeitig erinnert, bevor sie starten.
-            </p>
-            <span className="inline-block text-sm font-semibold text-primary">
-              Kostenlos anmelden →
-            </span>
-          </section>
-        )}
-
         {/* Quick Actions */}
         {!hasSearched && (
           <section className="space-y-3">
@@ -170,6 +149,27 @@ const Index = () => {
                 />
               </PopoverContent>
             </Popover>
+          </section>
+        )}
+
+        {/* CTA: Sign up to save */}
+        {!hasSearched && !user && (
+          <section
+            className="rounded-2xl bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 border border-primary/15 p-6 text-center space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => setShowAuthDialog(true)}
+          >
+            <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center mx-auto">
+              <Bookmark className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="font-display font-bold text-lg text-foreground">
+              Aktivitäten speichern & erinnert werden
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
+              Melde dich kostenlos an, speichere deine Lieblings-Aktivitäten und werde rechtzeitig erinnert, bevor sie starten.
+            </p>
+            <span className="inline-block text-sm font-semibold text-primary">
+              Kostenlos anmelden →
+            </span>
           </section>
         )}
 
