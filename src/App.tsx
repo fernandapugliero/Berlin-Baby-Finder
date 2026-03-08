@@ -27,6 +27,7 @@ const App = () => (
           <Route path="/activity/:id" element={<ActivityDetail />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/event-einreichen" element={<EventEinreichen />} />
+          <Route path="/kindercafe-einreichen" element={<KindercafeEinreichen />} />
           <Route path="/ueber" element={<UeberRausi />} />
           <Route path="/kontakt" element={<Kontakt />} />
           <Route path="/impressum" element={<Impressum />} />
