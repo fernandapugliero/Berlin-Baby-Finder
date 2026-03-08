@@ -100,8 +100,8 @@ const Index = () => {
       <div className="flex-1 pb-10">
           <header className="px-5 pt-8 pb-2 flex items-center justify-between max-w-3xl mx-auto w-full">
           <Link to="/" onClick={() => { setHasSearched(false); setFilters({ timeRange: "now" }); setSearchParams({}, { replace: true }); }}>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
-              <img src={rausiLogo} alt="Rausi" className="w-12 h-12" />
+            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-1">
+              <img src={rausiLogo} alt="Rausi" className="w-12 h-12 -mr-0.5" />
               Rausi
             </h1>
           </Link>
