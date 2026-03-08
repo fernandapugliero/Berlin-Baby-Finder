@@ -121,16 +121,16 @@ export function CrawlerOverridesAdmin() {
     onError: (e) => toast.error(`Fehler: ${e.message}`),
   });
 
-  const openEditor = (eventId: string, title: string, location: string) => {
-    const override = overrideMap.get(eventId);
+  const openEditor = (event: typeof crawlerOnly[number]) => {
+    const override = overrideMap.get(event.id);
     setFormHidden(override?.hidden ?? false);
     setFormPausedUntil(override?.paused_until?.slice(0, 10) ?? "");
-    setFormTitle(override?.title_override ?? "");
-    setFormDescription(override?.description_override ?? "");
-    setFormAge(override?.age_override ?? "");
-    setFormDistrict(override?.district_override ?? "");
+    setFormTitle(override?.title_override ?? event.title);
+    setFormDescription(override?.description_override ?? event.description ?? "");
+    setFormAge(override?.age_override ?? (event.age_groups?.length ? event.age_groups.join(", ") : ""));
+    setFormDistrict(override?.district_override ?? event.district ?? "");
     setFormNotes(override?.notes ?? "");
-    setEditingEvent({ id: eventId, title, location, override });
+    setEditingEvent({ id: event.id, title: event.title, location: event.location_name, override });
   };
 
   const handleSave = () => {
@@ -199,7 +199,7 @@ export function CrawlerOverridesAdmin() {
                   variant="outline"
                   size="sm"
                   className="rounded-full gap-1 text-xs h-7 px-2"
-                  onClick={() => openEditor(event.id, event.title, event.location_name)}
+                  onClick={() => openEditor(event)}
                 >
                   <Pencil className="w-3 h-3" />
                   Bearbeiten
