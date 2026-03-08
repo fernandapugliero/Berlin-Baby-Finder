@@ -90,7 +90,7 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5 pt-1">
           <span className={activity.is_free ? "chip chip-free" : "chip chip-paid"}>
-            {activity.is_free ? "✓ Kostenlos" : activity.price_info || "Kostenpflichtig"}
+            {activity.is_free ? "Kostenlos" : activity.price_info || "Kostenpflichtig"}
           </span>
           <span className="chip chip-district">{activity.district}</span>
           {activity.age_groups.map((age) => (
