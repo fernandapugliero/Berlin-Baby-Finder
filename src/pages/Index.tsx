@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { QuickActions } from "@/components/QuickActions";
 import { FilterChips } from "@/components/FilterChips";
 import { ActivityCard } from "@/components/ActivityCard";
@@ -17,9 +17,19 @@ import { useBookmarks } from "@/hooks/use-bookmarks";
 import type { SearchFilters } from "@/lib/types";
 
 const Index = () => {
-  const [filters, setFilters] = useState<SearchFilters>({ timeRange: "now" });
-  const [hasSearched, setHasSearched] = useState(false);
-  const [customDate, setCustomDate] = useState<Date | undefined>();
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Restore state from URL params
+  const initialTimeRange = (searchParams.get("t") as SearchFilters["timeRange"]) || "now";
+  const initialSearched = searchParams.has("t");
+  const initialCustomDate = searchParams.get("cd") ? new Date(searchParams.get("cd")!) : undefined;
+
+  const [filters, setFilters] = useState<SearchFilters>(() => ({
+    timeRange: initialTimeRange,
+    customDate: initialCustomDate,
+  }));
+  const [hasSearched, setHasSearched] = useState(initialSearched);
+  const [customDate, setCustomDate] = useState<Date | undefined>(initialCustomDate);
   const [isLocating, setIsLocating] = useState(false);
   const [activeLocation, setActiveLocation] = useState<string>();
   const { toggle, isBookmarked } = useBookmarks();
@@ -33,6 +43,7 @@ const Index = () => {
   const handleQuickAction = (timeRange: SearchFilters["timeRange"]) => {
     setFilters((f) => ({ ...f, timeRange }));
     setHasSearched(true);
+    setSearchParams({ t: timeRange }, { replace: true });
   };
 
   const handleNearMe = (lat: number, lng: number) => {
@@ -51,6 +62,7 @@ const Index = () => {
     if (date) {
       setFilters((f) => ({ ...f, timeRange: "custom", customDate: date }));
       setHasSearched(true);
+      setSearchParams({ t: "custom", cd: date.toISOString() }, { replace: true });
     }
   };
 
@@ -65,7 +77,7 @@ const Index = () => {
     <div className="min-h-screen pb-10">
       {/* Header */}
       <header className="px-5 pt-8 pb-2 flex items-center justify-between max-w-3xl mx-auto w-full">
-        <Link to="/" onClick={() => { setHasSearched(false); setFilters({ timeRange: "now" }); }}>
+        <Link to="/" onClick={() => { setHasSearched(false); setFilters({ timeRange: "now" }); setSearchParams({}, { replace: true }); }}>
           <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
             🟠 Rausi
           </h1>
