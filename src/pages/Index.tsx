@@ -127,7 +127,7 @@ const Index = () => {
                     </div>
                     <div className="text-left">
                       <span className="font-display font-semibold text-base text-card-foreground block">
-                        Anderes Datum
+                        Datum wählen
                       </span>
                       <span className="text-sm text-muted-foreground">
                         {customDate 
