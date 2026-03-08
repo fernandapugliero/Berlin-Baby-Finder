@@ -1,4 +1,7 @@
+import { useEffect } from "react";
 import { Zap, Sun, Sunrise } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { searchActivities } from "@/lib/activity-queries";
 import type { SearchFilters } from "@/lib/types";
 
 interface QuickActionsProps {
@@ -6,11 +9,21 @@ interface QuickActionsProps {
 }
 
 export function QuickActions({ onSelect }: QuickActionsProps) {
+  // Prefetch "now" count
+  const { data: nowActivities } = useQuery({
+    queryKey: ["activities", { timeRange: "now" }],
+    queryFn: () => searchActivities({ timeRange: "now" }),
+  });
+
+  const nowCount = nowActivities?.length ?? null;
+
   const actions = [
     {
       key: "now" as const,
       label: "Jetzt",
-      sublabel: "Aktivitäten in den nächsten 3 Stunden",
+      sublabel: nowCount !== null
+        ? `${nowCount} Aktivität${nowCount === 1 ? "" : "en"} in den nächsten 3 Stunden`
+        : "Aktivitäten in den nächsten 3 Stunden",
       icon: Zap,
       gradient: "from-primary to-primary/80",
       textColor: "text-primary-foreground",
