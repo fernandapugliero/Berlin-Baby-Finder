@@ -12,21 +12,24 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
       label: "Jetzt",
       sublabel: "Aktivitäten in den nächsten 3 Stunden",
       icon: Zap,
-      iconColor: "text-primary",
+      gradient: "from-primary to-primary/80",
+      textColor: "text-primary-foreground",
     },
     {
       key: "today_afternoon" as const,
       label: "Heute Nachmittag",
       sublabel: "12:00 – 18:00",
       icon: Sun,
-      iconColor: "text-accent-foreground",
+      gradient: "from-secondary to-secondary/80",
+      textColor: "text-secondary-foreground",
     },
     {
       key: "tomorrow_morning" as const,
       label: "Morgen Vormittag",
       sublabel: "08:00 – 13:00",
       icon: Sunrise,
-      iconColor: "text-secondary-foreground",
+      gradient: "from-accent to-accent/80",
+      textColor: "text-accent-foreground",
     },
   ];
 
@@ -35,19 +38,18 @@ export function QuickActions({ onSelect }: QuickActionsProps) {
       {actions.map((action) => (
         <button
           key={action.key}
-          className="quick-action-btn w-full"
+          className={`w-full flex items-center gap-4 p-5 rounded-2xl bg-gradient-to-r ${action.gradient} ${action.textColor} transition-all duration-200 active:scale-[0.97]`}
+          style={{ boxShadow: "var(--shadow-hero)" }}
           onClick={() => onSelect(action.key)}
         >
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <action.icon className={`w-5 h-5 ${action.iconColor}`} />
-            </div>
-            <div className="text-left">
-              <span className="font-display font-semibold text-base text-card-foreground block">
-                {action.label}
-              </span>
-              <span className="text-sm text-muted-foreground">{action.sublabel}</span>
-            </div>
+          <div className="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
+            <action.icon className="w-6 h-6" />
+          </div>
+          <div className="text-left">
+            <span className="font-display font-bold text-lg block leading-tight">
+              {action.label}
+            </span>
+            <span className="text-sm opacity-90">{action.sublabel}</span>
           </div>
         </button>
       ))}
