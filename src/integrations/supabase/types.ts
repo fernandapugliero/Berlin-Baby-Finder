@@ -38,6 +38,7 @@ export type Database = {
           source: string | null
           source_url: string | null
           start_time: string
+          submitted_by: string | null
           title: string
           updated_at: string
         }
@@ -64,6 +65,7 @@ export type Database = {
           source?: string | null
           source_url?: string | null
           start_time: string
+          submitted_by?: string | null
           title: string
           updated_at?: string
         }
@@ -90,6 +92,7 @@ export type Database = {
           source?: string | null
           source_url?: string | null
           start_time?: string
+          submitted_by?: string | null
           title?: string
           updated_at?: string
         }
