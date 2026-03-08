@@ -119,19 +119,6 @@ const Index = () => {
                 />
               </PopoverContent>
             </Popover>
-
-            {/* Filter teaser */}
-            <div className="pt-4 flex flex-wrap items-center justify-center gap-2 text-sm text-muted-foreground">
-              <span className="font-medium">Filtere nach:</span>
-              {["Kostenlos", "Ohne Anmeldung", "Alter", "In der Nähe"].map((label) => (
-                <span
-                  key={label}
-                  className="px-3 py-1 rounded-full border border-border bg-card/60 text-muted-foreground font-medium"
-                >
-                  {label}
-                </span>
-              ))}
-            </div>
           </section>
         )}
 
