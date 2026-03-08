@@ -85,6 +85,21 @@ const Index = () => {
             🟠 Rausi
           </h1>
         </Link>
+        {user ? (
+          <button
+            onClick={signOut}
+            className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors"
+          >
+            Abmelden
+          </button>
+        ) : (
+          <button
+            onClick={() => setShowAuthDialog(true)}
+            className="text-sm text-primary font-semibold hover:underline transition-colors"
+          >
+            Anmelden
+          </button>
+        )}
       </header>
 
       <div className="px-5 space-y-8 max-w-3xl mx-auto">
