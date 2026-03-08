@@ -199,7 +199,7 @@ export function CrawlerOverridesAdmin() {
                   variant="outline"
                   size="sm"
                   className="rounded-full gap-1 text-xs h-7 px-2"
-                  onClick={() => openEditor(event.id, event.title, event.location_name)}
+                  onClick={() => openEditor(event)}
                 >
                   <Pencil className="w-3 h-3" />
                   Bearbeiten
