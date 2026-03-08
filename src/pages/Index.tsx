@@ -64,7 +64,7 @@ const Index = () => {
   return (
     <div className="min-h-screen pb-10">
       {/* Header */}
-      <header className="px-5 pt-8 pb-2 flex items-center justify-between">
+      <header className="px-5 pt-8 pb-2 flex items-center justify-between max-w-3xl mx-auto w-full">
         <Link to="/" onClick={() => { setHasSearched(false); setFilters({ timeRange: "now" }); }}>
           <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
             🟠 Rausi
@@ -72,11 +72,11 @@ const Index = () => {
         </Link>
       </header>
 
-      <div className="px-5 space-y-8">
+      <div className="px-5 space-y-8 max-w-3xl mx-auto">
         {/* Hero */}
         {!hasSearched && (
-          <section className="pt-6 pb-2">
-            <h2 className="font-display font-bold text-4xl leading-[1.15] text-foreground tracking-tight">
+          <section className="pt-6 pb-2 text-center">
+            <h2 className="font-display font-bold text-4xl md:text-5xl leading-[1.15] text-foreground tracking-tight">
               Was du <span className="hero-highlight">jetzt</span> mit Kindern in Berlin machen kannst.
             </h2>
           </section>
