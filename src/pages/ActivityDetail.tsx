@@ -102,7 +102,7 @@ const ActivityDetail = () => {
         {/* Status badge */}
         {statusLabel && (
           <span className={statusType === "live" ? "chip chip-live" : "chip chip-soon"}>
-            {statusType === "live" ? "🟢 " : "⏳ "}{statusLabel}
+            {statusLabel}
           </span>
         )}
 
