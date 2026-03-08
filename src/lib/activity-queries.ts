@@ -123,8 +123,16 @@ async function loadEvents(): Promise<Activity[]> {
         ? e.district as Activity["district"]
         : "Mitte" as const;
 
+      // Stable ID based on content hash
+      const idSource = `${e.title}|${e.venue_name}|${e.start_time}`;
+      let hash = 0;
+      for (let c = 0; c < idSource.length; c++) {
+        hash = ((hash << 5) - hash + idSource.charCodeAt(c)) | 0;
+      }
+      const stableId = `evt-${Math.abs(hash).toString(36)}`;
+
       return {
-        id: `evt-${i}`,
+        id: stableId,
         title: e.title,
         description: null,
         start_time: toISOWithTime(nextStart),
@@ -148,6 +156,7 @@ async function loadEvents(): Promise<Activity[]> {
         is_approved: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
+        submitted_by: null,
       };
     })
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
