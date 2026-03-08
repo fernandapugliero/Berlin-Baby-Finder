@@ -15,7 +15,6 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
   const startTime = new Date(activity.start_time);
   const endTime = activity.end_time ? new Date(activity.end_time) : null;
   const { label: statusLabel, type: statusType } = getRelativeTimeLabel(startTime, endTime);
-  const categoryIcon = getCategoryIcon(activity.category);
 
   const handleBookmark = (e: React.MouseEvent) => {
     e.stopPropagation();
