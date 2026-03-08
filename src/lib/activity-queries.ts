@@ -8,6 +8,11 @@ interface RawEvent {
   start_time: string;
   end_time: string | null;
   age: string | null;
+  day_of_week: string | null;
+  district: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
   source_name: string;
   source_url: string;
   venue_name: string;
@@ -44,12 +49,51 @@ function parseAgeGroups(age: string | null): Activity["age_groups"] {
   return [];
 }
 
-function todayWithTime(timeStr: string): string {
+const DAY_MAP: Record<string, number> = {
+  "Montag": 1, "Dienstag": 2, "Mittwoch": 3, "Donnerstag": 4,
+  "Freitag": 5, "Samstag": 6, "Sonntag": 0,
+};
+
+function getNextOccurrence(dayOfWeek: string | null, timeStr: string): Date {
+  const now = new Date();
   const [h, m] = timeStr.split(":").map(Number);
-  const d = new Date();
+
+  if (!dayOfWeek || !DAY_MAP.hasOwnProperty(dayOfWeek)) {
+    // No day_of_week: assume today
+    const d = new Date(now);
+    d.setHours(h, m, 0, 0);
+    return d;
+  }
+
+  const targetDay = DAY_MAP[dayOfWeek];
+  const currentDay = now.getDay();
+  let daysAhead = targetDay - currentDay;
+  if (daysAhead < 0) daysAhead += 7;
+  // If it's today but the event already ended, push to next week
+  if (daysAhead === 0) {
+    const todayTime = new Date(now);
+    todayTime.setHours(h, m, 0, 0);
+    if (todayTime < now) {
+      // Check if it's still running (end_time handled at call site)
+      // For start_time only, skip if already passed
+    }
+  }
+
+  const d = new Date(now);
+  d.setDate(d.getDate() + daysAhead);
   d.setHours(h, m, 0, 0);
-  return d.toISOString();
+  return d;
 }
+
+function toISOWithTime(date: Date): string {
+  return date.toISOString();
+}
+
+const VALID_DISTRICTS = [
+  "Mitte", "Friedrichshain-Kreuzberg", "Pankow", "Charlottenburg-Wilmersdorf",
+  "Spandau", "Steglitz-Zehlendorf", "Tempelhof-Schöneberg", "Neukölln",
+  "Treptow-Köpenick", "Marzahn-Hellersdorf", "Lichtenberg", "Reinickendorf",
+];
 
 let cachedEvents: Activity[] | null = null;
 let cacheTimestamp = 0;
@@ -67,32 +111,45 @@ async function loadEvents(): Promise<Activity[]> {
 
   cachedEvents = events
     .filter((e) => !isLowQuality(e.title))
-    .map((e, i) => ({
-      id: `evt-${i}`,
-      title: e.title,
-      description: null,
-      start_time: todayWithTime(e.start_time),
-      end_time: e.end_time ? todayWithTime(e.end_time) : null,
-      location_name: e.venue_name,
-      address: null,
-      district: "Mitte" as const, // default since JSON has no district
-      age_groups: parseAgeGroups(e.age),
-      is_free: true,
-      price_info: null,
-      registration_required: false,
-      registration_url: null,
-      source: e.source_name,
-      source_url: e.source_url,
-      image_url: null,
-      category: null,
-      latitude: null,
-      longitude: null,
-      recurring: null,
-      recurrence_rule: null,
-      is_approved: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }))
+    .map((e, i) => {
+      const nextStart = getNextOccurrence(e.day_of_week, e.start_time);
+      let nextEnd: Date | null = null;
+      if (e.end_time) {
+        nextEnd = new Date(nextStart);
+        const [eh, em] = e.end_time.split(":").map(Number);
+        nextEnd.setHours(eh, em, 0, 0);
+      }
+      const district = e.district && VALID_DISTRICTS.includes(e.district)
+        ? e.district as Activity["district"]
+        : "Mitte" as const;
+
+      return {
+        id: `evt-${i}`,
+        title: e.title,
+        description: null,
+        start_time: toISOWithTime(nextStart),
+        end_time: nextEnd ? toISOWithTime(nextEnd) : null,
+        location_name: e.venue_name,
+        address: e.address ?? null,
+        district,
+        age_groups: parseAgeGroups(e.age),
+        is_free: true,
+        price_info: null,
+        registration_required: false,
+        registration_url: null,
+        source: e.source_name,
+        source_url: e.source_url,
+        image_url: null,
+        category: null,
+        latitude: e.latitude ?? null,
+        longitude: e.longitude ?? null,
+        recurring: e.day_of_week ? true : null,
+        recurrence_rule: e.day_of_week ?? null,
+        is_approved: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+    })
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
 
   cacheTimestamp = Date.now();
@@ -138,6 +195,17 @@ export function formatDistance(meters: number): string {
   return `${(meters / 1000).toFixed(1)} km entfernt`;
 }
 
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371000; // meters
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 export async function searchActivities(filters: SearchFilters) {
   const allEvents = await loadEvents();
   const { start, end } = getTimeRange(filters.timeRange, filters.customDate);
@@ -149,7 +217,6 @@ export async function searchActivities(filters: SearchFilters) {
 
   if (filters.ageGroup) {
     results = results.filter((a) => {
-      // Map simple age filter to matching db age groups
       const ageMap: Record<string, string[]> = {
         "0-1": ["0-6 months", "6-12 months"],
         "1-3": ["1-2 years", "2-3 years"],
@@ -160,7 +227,32 @@ export async function searchActivities(filters: SearchFilters) {
     });
   }
 
-  return results.map((a) => ({ ...a, _distance: null as number | null }));
+  if (filters.district) {
+    results = results.filter((a) => a.district === filters.district);
+  }
+
+  // Calculate distance if user location is available
+  const hasUserLocation = filters.nearLat != null && filters.nearLng != null;
+
+  const withDistance = results.map((a) => {
+    let _distance: number | null = null;
+    if (hasUserLocation && a.latitude != null && a.longitude != null) {
+      _distance = haversineDistance(filters.nearLat!, filters.nearLng!, a.latitude, a.longitude);
+    }
+    return { ...a, _distance };
+  });
+
+  // Sort by distance if location available, otherwise by start_time
+  if (hasUserLocation) {
+    withDistance.sort((a, b) => {
+      if (a._distance == null && b._distance == null) return 0;
+      if (a._distance == null) return 1;
+      if (b._distance == null) return -1;
+      return a._distance - b._distance;
+    });
+  }
+
+  return withDistance;
 }
 
 export async function fetchAllActivities() {
