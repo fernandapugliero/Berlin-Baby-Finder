@@ -1,6 +1,8 @@
 import { useRef } from "react";
-import { BERLIN_DISTRICTS, AGE_GROUPS, type SearchFilters } from "@/lib/types";
-import { getAgeLabel } from "@/lib/utils";
+import type { SearchFilters } from "@/lib/types";
+
+const SIMPLE_AGE_GROUPS = ["0-1", "1-3", "3+"] as const;
+type SimpleAge = typeof SIMPLE_AGE_GROUPS[number];
 
 interface FilterChipsProps {
   filters: SearchFilters;
@@ -21,12 +23,14 @@ export function FilterChips({ filters, onChange }: FilterChipsProps) {
     });
   };
 
-  const setDistrict = (d?: string) => {
-    onChange({ ...filters, district: d as SearchFilters["district"] });
-  };
-
   const setAge = (a?: string) => {
     onChange({ ...filters, ageGroup: a as SearchFilters["ageGroup"] });
+  };
+
+  const ageLabels: Record<SimpleAge, string> = {
+    "0-1": "0–1 J.",
+    "1-3": "1–3 J.",
+    "3+": "3+ J.",
   };
 
   return (
@@ -35,7 +39,6 @@ export function FilterChips({ filters, onChange }: FilterChipsProps) {
       className="flex gap-2 overflow-x-auto pb-2 -mx-5 px-5 scrollbar-hide"
       style={{ WebkitOverflowScrolling: "touch" }}
     >
-      {/* Free filter */}
       <button
         className={`filter-chip ${filters.isFree === true ? "active" : ""}`}
         onClick={toggleFree}
@@ -43,7 +46,6 @@ export function FilterChips({ filters, onChange }: FilterChipsProps) {
         Kostenlos
       </button>
 
-      {/* No registration */}
       <button
         className={`filter-chip ${filters.registrationRequired === false ? "active" : ""}`}
         onClick={toggleNoRegistration}
@@ -51,15 +53,13 @@ export function FilterChips({ filters, onChange }: FilterChipsProps) {
         Ohne Anmeldung
       </button>
 
-
-      {/* Age chips */}
-      {AGE_GROUPS.map((a) => (
+      {SIMPLE_AGE_GROUPS.map((a) => (
         <button
           key={a}
           className={`filter-chip ${filters.ageGroup === a ? "active" : ""}`}
           onClick={() => setAge(filters.ageGroup === a ? undefined : a)}
         >
-          {getAgeLabel(a)}
+          {ageLabels[a]}
         </button>
       ))}
     </div>

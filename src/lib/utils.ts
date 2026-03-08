@@ -38,10 +38,13 @@ export function formatActivityTime(startTime: Date, endTime?: Date | null): stri
 
 export function getAgeLabel(age: string): string {
   const map: Record<string, string> = {
-    "0-6 months": "0–6 Mon.",
-    "6-12 months": "6–12 Mon.",
-    "1-2 years": "1–2 J.",
-    "2-3 years": "2–3 J.",
+    "0-1": "0–1 J.",
+    "1-3": "1–3 J.",
+    "3+": "3+ J.",
+    "0-6 months": "0–1 J.",
+    "6-12 months": "0–1 J.",
+    "1-2 years": "1–3 J.",
+    "2-3 years": "1–3 J.",
     "3+ years": "3+ J.",
   };
   return map[age] || age;
