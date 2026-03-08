@@ -1,10 +1,9 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Clock, MapPin, ExternalLink, Baby, Tag, Bookmark, CalendarPlus, Download } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, ExternalLink, Baby, Tag, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchAllActivities } from "@/lib/activity-queries";
 import { formatActivityTime, getRelativeTimeLabel, getAgeLabel } from "@/lib/utils";
-import { getGoogleCalendarUrl, downloadIcs } from "@/lib/calendar";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 import { AuthDialog } from "@/components/AuthDialog";
 
@@ -16,13 +15,8 @@ const ActivityDetail = () => {
   const { data: activity, isLoading } = useQuery({
     queryKey: ["activity", id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("activities")
-        .select("*")
-        .eq("id", id!)
-        .single();
-      if (error) throw error;
-      return data;
+      const all = await fetchAllActivities();
+      return all.find((a) => a.id === id) ?? null;
     },
     enabled: !!id,
   });
@@ -90,17 +84,6 @@ const ActivityDetail = () => {
       </header>
 
       <div className="px-5 space-y-6">
-        {/* Image */}
-        {activity.image_url && (
-          <div className="rounded-2xl overflow-hidden">
-            <img
-              src={activity.image_url}
-              alt={activity.title}
-              className="w-full h-48 object-cover"
-            />
-          </div>
-        )}
-
         {/* Status badge */}
         {statusLabel && (
           <span className={statusType === "live" ? "chip chip-live" : "chip chip-soon"}>
@@ -149,48 +132,8 @@ const ActivityDetail = () => {
           </div>
         </div>
 
-        {/* Registration info */}
-        {activity.registration_required && (
-          <div className="bg-accent/20 rounded-2xl p-4 border border-accent/30">
-            <p className="text-sm font-bold text-accent-foreground">
-              Anmeldung erforderlich
-            </p>
-            {activity.registration_url && (
-              <a
-                href={activity.registration_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm text-primary font-semibold underline mt-1 inline-block"
-              >
-                Zur Anmeldung →
-              </a>
-            )}
-          </div>
-        )}
-
-        {/* Calendar export */}
-        <div className="flex gap-3">
-          <a
-            href={getGoogleCalendarUrl(activity)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm transition-all active:scale-95"
-          >
-            <CalendarPlus className="w-4 h-4" />
-            Google Calendar
-          </a>
-          <button
-            onClick={() => downloadIcs(activity)}
-            className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-muted text-foreground font-semibold text-sm transition-all active:scale-95 hover:bg-muted/80"
-          >
-            <Download className="w-4 h-4" />
-            .ics
-          </button>
-        </div>
-
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
-          <span className="chip chip-district">{activity.district}</span>
           {activity.age_groups.map((age) => (
             <span key={age} className="chip chip-age">{getAgeLabel(age)}</span>
           ))}
