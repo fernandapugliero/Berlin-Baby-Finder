@@ -71,11 +71,7 @@ export function KindercafeCarousel() {
             key={cafe.id}
             className="w-64 shrink-0 rounded-2xl overflow-hidden border border-border bg-card cursor-pointer group transition-all hover:shadow-md"
             style={{ boxShadow: "var(--shadow-card)" }}
-            onClick={() => {
-              if (cafe.google_maps_url) {
-                window.open(cafe.google_maps_url, "_blank");
-              }
-            }}
+            onClick={() => navigate(`/kindercafe/${cafe.id}`)}
           >
             {/* Image */}
             <div className="relative h-36 overflow-hidden">

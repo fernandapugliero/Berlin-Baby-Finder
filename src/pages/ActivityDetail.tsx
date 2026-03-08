@@ -132,13 +132,6 @@ const ActivityDetail = () => {
           </div>
         </div>
 
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2">
-          {activity.age_groups.map((age) => (
-            <span key={age} className="chip chip-age">{getAgeLabel(age)}</span>
-          ))}
-        </div>
-
         {/* Source link */}
         {activity.source_url && (
           <a

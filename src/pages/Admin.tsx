@@ -10,6 +10,8 @@ import { approveActivity, deleteActivity } from "@/lib/activity-queries";
 import { supabase } from "@/integrations/supabase/client";
 import { EmptyState } from "@/components/EmptyState";
 import { CrawlerOverridesAdmin } from "@/components/CrawlerOverridesAdmin";
+import { AuthDialog } from "@/components/AuthDialog";
+import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
 type Tab = "pending" | "approved" | "crawler";
@@ -18,6 +20,23 @@ const Admin = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [tab, setTab] = useState<Tab>("pending");
+  const { user, loading: authLoading } = useAuth();
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+
+  // Check if user has admin role
+  const { data: isAdmin, isLoading: roleLoading } = useQuery({
+    queryKey: ["user-role", user?.id],
+    queryFn: async () => {
+      if (!user) return false;
+      const { data, error } = await supabase.rpc("has_role", {
+        _user_id: user.id,
+        _role: "admin",
+      });
+      if (error) return false;
+      return data as boolean;
+    },
+    enabled: !!user,
+  });
 
   const { data: activities, isLoading } = useQuery({
     queryKey: ["admin-activities"],
@@ -29,6 +48,7 @@ const Admin = () => {
       if (error) throw error;
       return data;
     },
+    enabled: isAdmin === true,
   });
 
   const approveMutation = useMutation({
@@ -52,6 +72,56 @@ const Admin = () => {
   const filtered = activities?.filter((a) =>
     tab === "approved" ? a.is_approved : !a.is_approved
   );
+
+  // Loading state
+  if (authLoading || roleLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30">
+        <div className="text-center space-y-3">
+          <div className="w-8 h-8 rounded-full bg-muted animate-pulse mx-auto" />
+          <p className="text-sm text-muted-foreground">Laden...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Not logged in
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30 px-5">
+        <div className="text-center space-y-4 max-w-sm">
+          <h1 className="font-display text-xl font-bold">Admin-Bereich</h1>
+          <p className="text-sm text-muted-foreground">
+            Bitte melde dich an, um den Admin-Bereich zu nutzen.
+          </p>
+          <Button className="rounded-full" onClick={() => setShowAuthDialog(true)}>
+            Anmelden
+          </Button>
+          <Button variant="ghost" className="rounded-full" onClick={() => navigate("/")}>
+            Zurück zur Startseite
+          </Button>
+        </div>
+        <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
+      </div>
+    );
+  }
+
+  // Not admin
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/30 px-5">
+        <div className="text-center space-y-4 max-w-sm">
+          <h1 className="font-display text-xl font-bold">Kein Zugriff</h1>
+          <p className="text-sm text-muted-foreground">
+            Du hast keine Admin-Berechtigung.
+          </p>
+          <Button variant="outline" className="rounded-full" onClick={() => navigate("/")}>
+            Zurück zur Startseite
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-8 bg-muted/30">

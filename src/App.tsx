@@ -8,6 +8,7 @@ import ActivityDetail from "./pages/ActivityDetail";
 import Admin from "./pages/Admin";
 import EventEinreichen from "./pages/EventEinreichen";
 import KindercafeEinreichen from "./pages/KindercafeEinreichen";
+import KindercafeDetail from "./pages/KindercafeDetail";
 import UeberRausi from "./pages/UeberRausi";
 import Kontakt from "./pages/Kontakt";
 import Impressum from "./pages/Impressum";
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/admin" element={<Admin />} />
           <Route path="/event-einreichen" element={<EventEinreichen />} />
           <Route path="/kindercafe-einreichen" element={<KindercafeEinreichen />} />
+          <Route path="/kindercafe/:id" element={<KindercafeDetail />} />
           <Route path="/ueber" element={<UeberRausi />} />
           <Route path="/kontakt" element={<Kontakt />} />
           <Route path="/impressum" element={<Impressum />} />

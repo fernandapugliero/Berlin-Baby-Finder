@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import rausiLogo from "@/assets/rausi-logo-v5-yellow.png";
 import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarIcon, Bookmark, Plus } from "lucide-react";
@@ -100,8 +99,8 @@ const Index = () => {
       <div className="flex-1 pb-10">
           <header className="px-5 pt-8 pb-2 flex items-center justify-between max-w-3xl mx-auto w-full">
           <Link to="/" onClick={() => { setHasSearched(false); setFilters({ timeRange: "now" }); setSearchParams({}, { replace: true }); }}>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-0.5">
-              <img src={rausiLogo} alt="Rausi" className="w-10 h-10 object-contain" />
+            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-1.5">
+              <span className="text-2xl">🟠</span>
               Rausi
             </h1>
           </Link>
