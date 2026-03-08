@@ -10,19 +10,18 @@ function getTimeRange(filter: SearchFilters["timeRange"], customDate?: Date) {
       end.setHours(end.getHours() + 3);
       return { start: now, end };
     }
-    case "today_afternoon": {
+    case "today": {
       const start = new Date(now);
-      start.setHours(12, 0, 0, 0);
       const end = new Date(now);
-      end.setHours(18, 0, 0, 0);
+      end.setHours(23, 59, 59, 999);
       return { start, end };
     }
-    case "tomorrow_morning": {
+    case "tomorrow": {
       const start = new Date(now);
       start.setDate(start.getDate() + 1);
-      start.setHours(8, 0, 0, 0);
+      start.setHours(0, 0, 0, 0);
       const end = new Date(start);
-      end.setHours(13, 0, 0, 0);
+      end.setHours(23, 59, 59, 999);
       return { start, end };
     }
     case "custom": {

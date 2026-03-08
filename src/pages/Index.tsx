@@ -169,6 +169,18 @@ const Index = () => {
           </section>
         )}
 
+        {/* Location */}
+        {hasSearched && (
+          <section>
+            <LocationFilter
+              onNearMe={handleNearMe}
+              onSearchLocation={handleSearchLocation}
+              isLocating={isLocating}
+              activeLocation={activeLocation}
+            />
+          </section>
+        )}
+
         {/* Filters */}
         {hasSearched && (
           <section>
