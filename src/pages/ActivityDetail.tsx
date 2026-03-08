@@ -1,13 +1,15 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Clock, MapPin, ExternalLink, Baby, Tag } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, ExternalLink, Baby, Tag, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { formatActivityTime, getRelativeTimeLabel, getAgeLabel, getCategoryIcon } from "@/lib/utils";
+import { useBookmarks } from "@/hooks/use-bookmarks";
 
 const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { toggle, isBookmarked } = useBookmarks();
 
   const { data: activity, isLoading } = useQuery({
     queryKey: ["activity", id],
@@ -53,20 +55,36 @@ const ActivityDetail = () => {
   const endTime = activity.end_time ? new Date(activity.end_time) : null;
   const { label: statusLabel, type: statusType } = getRelativeTimeLabel(startTime, endTime);
   const categoryIcon = getCategoryIcon(activity.category);
+  const bookmarked = isBookmarked(activity.id);
 
   return (
     <div className="min-h-screen pb-10">
       {/* Top bar */}
-      <header className="px-5 pt-6 pb-4 flex items-center gap-3">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="rounded-full -ml-2"
-          onClick={() => navigate(-1)}
+      <header className="px-5 pt-6 pb-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full -ml-2"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </Button>
+          <Link to="/" className="font-display font-semibold text-sm text-muted-foreground hover:text-primary transition-colors">
+            🟠 Rausi
+          </Link>
+        </div>
+        <button
+          onClick={() => toggle(activity.id)}
+          className={`flex items-center gap-1.5 text-sm font-semibold rounded-full px-3 py-2 transition-all ${
+            bookmarked
+              ? "bg-primary text-primary-foreground"
+              : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
+          }`}
         >
-          <ArrowLeft className="w-5 h-5" />
-        </Button>
-        <span className="font-display font-semibold text-sm text-muted-foreground">Rausi</span>
+          <Bookmark className={`w-4 h-4 ${bookmarked ? "fill-current" : ""}`} />
+          {bookmarked ? "Gemerkt" : "Merken"}
+        </button>
       </header>
 
       <div className="px-5 space-y-6">
@@ -102,15 +120,15 @@ const ActivityDetail = () => {
         )}
 
         {/* Info rows */}
-        <div className="space-y-4 bg-card rounded-2xl p-5" style={{ boxShadow: "var(--shadow-card)" }}>
+        <div className="space-y-4 bg-card rounded-2xl p-5 border border-border" style={{ boxShadow: "var(--shadow-card)" }}>
           <div className="flex items-center gap-3">
-            <Clock className="w-5 h-5 text-primary/70 shrink-0" />
-            <span className="text-sm">{formatActivityTime(startTime, endTime)}</span>
+            <Clock className="w-5 h-5 text-primary shrink-0" />
+            <span className="text-sm font-medium">{formatActivityTime(startTime, endTime)}</span>
           </div>
           <div className="flex items-center gap-3">
-            <MapPin className="w-5 h-5 text-primary/70 shrink-0" />
+            <MapPin className="w-5 h-5 text-primary shrink-0" />
             <div>
-              <span className="text-sm block">{activity.location_name}</span>
+              <span className="text-sm block font-medium">{activity.location_name}</span>
               {activity.address && (
                 <span className="text-xs text-muted-foreground">{activity.address}</span>
               )}
@@ -118,12 +136,12 @@ const ActivityDetail = () => {
           </div>
           {activity.age_groups.length > 0 && (
             <div className="flex items-center gap-3">
-              <Baby className="w-5 h-5 text-primary/70 shrink-0" />
+              <Baby className="w-5 h-5 text-primary shrink-0" />
               <span className="text-sm">{activity.age_groups.map(getAgeLabel).join(", ")}</span>
             </div>
           )}
           <div className="flex items-center gap-3">
-            <Tag className="w-5 h-5 text-primary/70 shrink-0" />
+            <Tag className="w-5 h-5 text-primary shrink-0" />
             <span className="text-sm">
               {activity.is_free ? "Kostenlos" : activity.price_info || "Kostenpflichtig"}
             </span>
@@ -132,8 +150,8 @@ const ActivityDetail = () => {
 
         {/* Registration info */}
         {activity.registration_required && (
-          <div className="bg-accent/10 rounded-2xl p-4">
-            <p className="text-sm font-medium text-accent-foreground">
+          <div className="bg-accent/20 rounded-2xl p-4 border border-accent/30">
+            <p className="text-sm font-bold text-accent-foreground">
               Anmeldung erforderlich
             </p>
             {activity.registration_url && (
@@ -141,7 +159,7 @@ const ActivityDetail = () => {
                 href={activity.registration_url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm text-primary underline mt-1 inline-block"
+                className="text-sm text-primary font-semibold underline mt-1 inline-block"
               >
                 Zur Anmeldung →
               </a>
@@ -163,7 +181,7 @@ const ActivityDetail = () => {
             href={activity.source_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+            className="inline-flex items-center gap-2 text-sm text-primary font-semibold hover:underline"
           >
             <ExternalLink className="w-4 h-4" />
             Originalquelle ansehen

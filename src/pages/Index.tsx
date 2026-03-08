@@ -3,21 +3,23 @@ import { useQuery } from "@tanstack/react-query";
 import { CalendarIcon } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
+import { Link } from "react-router-dom";
 import { QuickActions } from "@/components/QuickActions";
 import { FilterChips } from "@/components/FilterChips";
 import { ActivityCard } from "@/components/ActivityCard";
 import { EmptyState } from "@/components/EmptyState";
 import { searchActivities } from "@/lib/activity-queries";
-import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { useBookmarks } from "@/hooks/use-bookmarks";
 import type { SearchFilters } from "@/lib/types";
 
 const Index = () => {
   const [filters, setFilters] = useState<SearchFilters>({ timeRange: "now" });
   const [hasSearched, setHasSearched] = useState(false);
   const [customDate, setCustomDate] = useState<Date | undefined>();
+  const { toggle, isBookmarked } = useBookmarks();
 
   const { data: activities, isLoading } = useQuery({
     queryKey: ["activities", filters],
@@ -49,9 +51,11 @@ const Index = () => {
     <div className="min-h-screen pb-10">
       {/* Header */}
       <header className="px-5 pt-8 pb-2 flex items-center justify-between">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
-          🟠 Rausi
-        </h1>
+        <Link to="/" onClick={() => { setHasSearched(false); setFilters({ timeRange: "now" }); }}>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+            🟠 Rausi
+          </h1>
+        </Link>
       </header>
 
       <div className="px-5 space-y-8">
@@ -186,7 +190,11 @@ const Index = () => {
                     className="animate-fade-in"
                     style={{ animationDelay: `${i * 80}ms` }}
                   >
-                    <ActivityCard activity={activity} />
+                    <ActivityCard
+                      activity={activity}
+                      isBookmarked={isBookmarked(activity.id)}
+                      onToggleBookmark={toggle}
+                    />
                   </div>
                 ))}
               </div>
