@@ -35,6 +35,23 @@ function getTimeRange(filter: SearchFilters["timeRange"], customDate?: Date) {
   }
 }
 
+/** Haversine distance in meters */
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371000;
+  const toRad = (v: number) => (v * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+export function formatDistance(meters: number): string {
+  if (meters < 1000) return `${Math.round(meters)} m entfernt`;
+  return `${(meters / 1000).toFixed(1)} km entfernt`;
+}
+
 export async function searchActivities(filters: SearchFilters) {
   const { start, end } = getTimeRange(filters.timeRange, filters.customDate);
 
@@ -60,7 +77,28 @@ export async function searchActivities(filters: SearchFilters) {
 
   const { data, error } = await query;
   if (error) throw error;
-  return data;
+
+  // If user location is available, compute distance and sort by proximity
+  if (data && filters.nearLat != null && filters.nearLng != null) {
+    const userLat = filters.nearLat;
+    const userLng = filters.nearLng;
+    const withDistance = data.map((a) => ({
+      ...a,
+      _distance:
+        a.latitude != null && a.longitude != null
+          ? haversineDistance(userLat, userLng, a.latitude, a.longitude)
+          : null,
+    }));
+    withDistance.sort((a, b) => {
+      if (a._distance == null && b._distance == null) return 0;
+      if (a._distance == null) return 1;
+      if (b._distance == null) return -1;
+      return a._distance - b._distance;
+    });
+    return withDistance;
+  }
+
+  return data?.map((a) => ({ ...a, _distance: null as number | null })) ?? [];
 }
 
 export async function fetchAllActivities() {
