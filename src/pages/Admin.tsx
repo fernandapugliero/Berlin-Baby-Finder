@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft, Check, Trash2, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Check, Trash2, Eye, EyeOff, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -9,12 +9,15 @@ import { de } from "date-fns/locale";
 import { approveActivity, deleteActivity } from "@/lib/activity-queries";
 import { supabase } from "@/integrations/supabase/client";
 import { EmptyState } from "@/components/EmptyState";
+import { CrawlerOverridesAdmin } from "@/components/CrawlerOverridesAdmin";
 import { toast } from "sonner";
+
+type Tab = "pending" | "approved" | "crawler";
 
 const Admin = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [showApproved, setShowApproved] = useState(false);
+  const [tab, setTab] = useState<Tab>("pending");
 
   const { data: activities, isLoading } = useQuery({
     queryKey: ["admin-activities"],
@@ -47,7 +50,7 @@ const Admin = () => {
   });
 
   const filtered = activities?.filter((a) =>
-    showApproved ? a.is_approved : !a.is_approved
+    tab === "approved" ? a.is_approved : !a.is_approved
   );
 
   return (
@@ -68,28 +71,39 @@ const Admin = () => {
       </header>
 
       <div className="px-5 py-4 space-y-4">
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button
-            variant={!showApproved ? "default" : "outline"}
+            variant={tab === "pending" ? "default" : "outline"}
             size="sm"
             className="rounded-full gap-1.5"
-            onClick={() => setShowApproved(false)}
+            onClick={() => setTab("pending")}
           >
             <EyeOff className="w-3.5 h-3.5" />
             Ausstehend
           </Button>
           <Button
-            variant={showApproved ? "default" : "outline"}
+            variant={tab === "approved" ? "default" : "outline"}
             size="sm"
             className="rounded-full gap-1.5"
-            onClick={() => setShowApproved(true)}
+            onClick={() => setTab("approved")}
           >
             <Eye className="w-3.5 h-3.5" />
             Freigegeben
           </Button>
+          <Button
+            variant={tab === "crawler" ? "default" : "outline"}
+            size="sm"
+            className="rounded-full gap-1.5"
+            onClick={() => setTab("crawler")}
+          >
+            <Settings className="w-3.5 h-3.5" />
+            Crawler-Daten
+          </Button>
         </div>
 
-        {isLoading ? (
+        {tab === "crawler" ? (
+          <CrawlerOverridesAdmin />
+        ) : isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
               <div key={i} className="h-28 rounded-2xl bg-muted animate-pulse" />
@@ -154,9 +168,9 @@ const Admin = () => {
           </div>
         ) : (
           <EmptyState
-            title={showApproved ? "Keine freigegebenen Events" : "Keine ausstehenden Events"}
+            title={tab === "approved" ? "Keine freigegebenen Events" : "Keine ausstehenden Events"}
             description={
-              showApproved
+              tab === "approved"
                 ? "Freigegebene Events erscheinen hier"
                 : "Importierte Events werden hier zur Überprüfung angezeigt"
             }
