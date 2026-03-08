@@ -18,7 +18,13 @@ export function getRelativeTimeLabel(startTime: Date, endTime?: Date | null): { 
     return { label: "Läuft gerade", type: "live" };
   }
   if (diffMin > 0 && diffMin <= 120) {
-    return { label: `Beginnt in ${diffMin} Min.`, type: "soon" };
+    if (diffMin < 60) {
+      return { label: `Beginnt in ${diffMin} Min.`, type: "soon" };
+    }
+    const hours = Math.floor(diffMin / 60);
+    const mins = diffMin % 60;
+    const timeStr = mins > 0 ? `${hours} Std. ${mins} Min.` : `${hours} Std.`;
+    return { label: `Beginnt in ${timeStr}`, type: "soon" };
   }
   return { label: "", type: "normal" };
 }
