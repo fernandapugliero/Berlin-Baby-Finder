@@ -54,7 +54,7 @@ const ActivityDetail = () => {
   const startTime = new Date(activity.start_time);
   const endTime = activity.end_time ? new Date(activity.end_time) : null;
   const { label: statusLabel, type: statusType } = getRelativeTimeLabel(startTime, endTime);
-  const categoryIcon = getCategoryIcon(activity.category);
+  
   const bookmarked = isBookmarked(activity.id);
 
   return (
