@@ -168,11 +168,6 @@ const Index = () => {
             </section>
           )}
 
-          {/* District filter on homepage */}
-          {!hasSearched && (
-            <DistrictFilter value={selectedDistrict} onChange={handleDistrictChange} />
-          )}
-
           {/* Preview card on homepage */}
           {!hasSearched && <HomepagePreview />}
 
@@ -242,11 +237,6 @@ const Index = () => {
                 </PopoverContent>
               </Popover>
             </section>
-          )}
-
-          {/* District filter when searched */}
-          {hasSearched && (
-            <DistrictFilter value={selectedDistrict} onChange={handleDistrictChange} />
           )}
 
           {/* Location */}
