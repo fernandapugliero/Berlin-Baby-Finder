@@ -62,6 +62,7 @@ const Index = () => {
     if (date) {
       setFilters((f) => ({ ...f, timeRange: "custom", customDate: date }));
       setHasSearched(true);
+      setSearchParams({ t: "custom", cd: date.toISOString() }, { replace: true });
     }
   };
 
