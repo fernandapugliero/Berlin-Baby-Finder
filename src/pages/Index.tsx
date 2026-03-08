@@ -14,6 +14,8 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { AuthDialog } from "@/components/AuthDialog";
+import { useAuth } from "@/hooks/useAuth";
 import type { SearchFilters } from "@/lib/types";
 
 const Index = () => {
@@ -32,7 +34,8 @@ const Index = () => {
   const [customDate, setCustomDate] = useState<Date | undefined>(initialCustomDate);
   const [isLocating, setIsLocating] = useState(false);
   const [activeLocation, setActiveLocation] = useState<string>();
-  const { toggle, isBookmarked } = useBookmarks();
+  const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
+  const { user, signOut } = useAuth();
 
   const { data: activities, isLoading } = useQuery({
     queryKey: ["activities", filters],
@@ -82,6 +85,21 @@ const Index = () => {
             🟠 Rausi
           </h1>
         </Link>
+        {user ? (
+          <button
+            onClick={signOut}
+            className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors"
+          >
+            Abmelden
+          </button>
+        ) : (
+          <button
+            onClick={() => setShowAuthDialog(true)}
+            className="text-sm text-primary font-semibold hover:underline transition-colors"
+          >
+            Anmelden
+          </button>
+        )}
       </header>
 
       <div className="px-5 space-y-8 max-w-3xl mx-auto">
@@ -237,6 +255,7 @@ const Index = () => {
           </section>
         )}
       </div>
+      <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
     </div>
   );
 };
