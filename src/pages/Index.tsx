@@ -232,6 +232,8 @@ const Index = () => {
           {/* Newsletter signup */}
           {!hasSearched && <NewsletterSignup />}
 
+          {/* Compact header when searched */}
+          {hasSearched && (
             <section className="pt-2">
               <h2 className="font-display font-bold text-2xl leading-tight text-foreground">
                 Was machen mit{" "}
