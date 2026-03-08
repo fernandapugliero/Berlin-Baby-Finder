@@ -152,7 +152,7 @@ const Index = () => {
             <Popover>
               <PopoverTrigger asChild>
                 <button className={`filter-chip ${filters.timeRange === "custom" ? "active" : ""}`}>
-                  📅 {customDate ? format(customDate, "dd. MMM", { locale: de }) : "Datum"}
+                  {customDate ? format(customDate, "dd. MMM", { locale: de }) : "Datum"}
                 </button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
