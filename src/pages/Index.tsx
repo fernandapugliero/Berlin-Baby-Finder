@@ -1,9 +1,5 @@
 import { useState, useMemo } from "react";
-import logoV1 from "@/assets/rausi-logo.png";
-import logoV2 from "@/assets/rausi-logo-v2.png";
-import logoV3 from "@/assets/rausi-logo-v3-green.png";
-import logoV5 from "@/assets/rausi-logo-v5-yellow.png";
-import logoV6 from "@/assets/rausi-logo-v6-r.png";
+import rausiLogo from "@/assets/rausi-logo-v5-yellow.png";
 import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarIcon, Bookmark, Plus } from "lucide-react";
@@ -102,29 +98,11 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <div className="flex-1 pb-10">
-          {/* TEMP: Logo Preview Banner */}
-          <div className="bg-accent/10 border border-accent/30 rounded-2xl p-4 mx-5 mt-4 max-w-3xl">
-            <p className="text-xs font-bold text-center mb-3">🎨 Qual logo você prefere? (temporário)</p>
-            <div className="flex gap-3 justify-center flex-wrap">
-              {[
-                { src: logoV1, label: "V1" },
-                { src: logoV2, label: "V2" },
-                { src: logoV3, label: "V3" },
-                { src: logoV5, label: "V5" },
-                { src: logoV6, label: "V6" },
-              ].map((l) => (
-                <div key={l.label} className="flex flex-col items-center gap-1">
-                  <img src={l.src} alt={l.label} className="w-14 h-14 object-contain rounded-xl border border-border bg-white p-1" />
-                  <span className="text-[10px] font-bold">{l.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
           <header className="px-5 pt-8 pb-2 flex items-center justify-between max-w-3xl mx-auto w-full">
           <Link to="/" onClick={() => { setHasSearched(false); setFilters({ timeRange: "now" }); setSearchParams({}, { replace: true }); }}>
-            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
-              🟠 Rausi
+            <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
+              <img src={rausiLogo} alt="Rausi" className="w-8 h-8" />
+              Rausi
             </h1>
           </Link>
           {user ? (
