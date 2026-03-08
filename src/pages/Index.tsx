@@ -1,9 +1,5 @@
 import { useState, useMemo } from "react";
-import logoV1 from "@/assets/rausi-logo.png";
-import logoV2 from "@/assets/rausi-logo-v2.png";
-import logoV3 from "@/assets/rausi-logo-v3-green.png";
-import logoV5 from "@/assets/rausi-logo-v5-yellow.png";
-import logoV6 from "@/assets/rausi-logo-v6-r.png";
+import rausiLogo from "@/assets/rausi-logo-v5-yellow.png";
 import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
 import { CalendarIcon, Bookmark, Plus } from "lucide-react";
