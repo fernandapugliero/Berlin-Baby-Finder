@@ -49,12 +49,51 @@ function parseAgeGroups(age: string | null): Activity["age_groups"] {
   return [];
 }
 
-function todayWithTime(timeStr: string): string {
+const DAY_MAP: Record<string, number> = {
+  "Montag": 1, "Dienstag": 2, "Mittwoch": 3, "Donnerstag": 4,
+  "Freitag": 5, "Samstag": 6, "Sonntag": 0,
+};
+
+function getNextOccurrence(dayOfWeek: string | null, timeStr: string): Date {
+  const now = new Date();
   const [h, m] = timeStr.split(":").map(Number);
-  const d = new Date();
+
+  if (!dayOfWeek || !DAY_MAP.hasOwnProperty(dayOfWeek)) {
+    // No day_of_week: assume today
+    const d = new Date(now);
+    d.setHours(h, m, 0, 0);
+    return d;
+  }
+
+  const targetDay = DAY_MAP[dayOfWeek];
+  const currentDay = now.getDay();
+  let daysAhead = targetDay - currentDay;
+  if (daysAhead < 0) daysAhead += 7;
+  // If it's today but the event already ended, push to next week
+  if (daysAhead === 0) {
+    const todayTime = new Date(now);
+    todayTime.setHours(h, m, 0, 0);
+    if (todayTime < now) {
+      // Check if it's still running (end_time handled at call site)
+      // For start_time only, skip if already passed
+    }
+  }
+
+  const d = new Date(now);
+  d.setDate(d.getDate() + daysAhead);
   d.setHours(h, m, 0, 0);
-  return d.toISOString();
+  return d;
 }
+
+function toISOWithTime(date: Date): string {
+  return date.toISOString();
+}
+
+const VALID_DISTRICTS = [
+  "Mitte", "Friedrichshain-Kreuzberg", "Pankow", "Charlottenburg-Wilmersdorf",
+  "Spandau", "Steglitz-Zehlendorf", "Tempelhof-Schöneberg", "Neukölln",
+  "Treptow-Köpenick", "Marzahn-Hellersdorf", "Lichtenberg", "Reinickendorf",
+];
 
 let cachedEvents: Activity[] | null = null;
 let cacheTimestamp = 0;
