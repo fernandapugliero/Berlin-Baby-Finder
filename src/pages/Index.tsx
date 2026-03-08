@@ -1,147 +1,287 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { EventCard } from "@/components/EventCard";
-import { fetchCrawledEvents, filterEvents } from "@/lib/json-events";
-import type { TimeFilter, AgeFilter } from "@/lib/json-events";
-
-const TIME_FILTERS: { key: TimeFilter; label: string }[] = [
-  { key: "jetzt", label: "Jetzt" },
-  { key: "nachmittag", label: "Heute Nachmittag" },
-  { key: "morgen", label: "Morgen" },
-];
-
-const AGE_FILTERS: { key: AgeFilter; label: string }[] = [
-  { key: "0-1", label: "0–1 Jahre" },
-  { key: "1-3", label: "1–3 Jahre" },
-  { key: "3-6", label: "3–6 Jahre" },
-];
+import { CalendarIcon, Bookmark } from "lucide-react";
+import { format } from "date-fns";
+import { de } from "date-fns/locale";
+import { Link, useSearchParams } from "react-router-dom";
+import { QuickActions } from "@/components/QuickActions";
+import { FilterChips } from "@/components/FilterChips";
+import { ActivityCard } from "@/components/ActivityCard";
+import { EmptyState } from "@/components/EmptyState";
+import { LocationFilter } from "@/components/LocationFilter";
+import { searchActivities } from "@/lib/activity-queries";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { useBookmarks } from "@/hooks/use-bookmarks";
+import { AuthDialog } from "@/components/AuthDialog";
+import { useAuth } from "@/hooks/useAuth";
+import type { SearchFilters } from "@/lib/types";
 
 const Index = () => {
-  const [timeFilter, setTimeFilter] = useState<TimeFilter | null>(null);
-  const [ageFilter, setAgeFilter] = useState<AgeFilter | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  // Restore state from URL params
+  const initialTimeRange = (searchParams.get("t") as SearchFilters["timeRange"]) || "now";
+  const initialSearched = searchParams.has("t");
+  const initialCustomDate = searchParams.get("cd") ? new Date(searchParams.get("cd")!) : undefined;
 
-  const { data: allEvents = [], isLoading } = useQuery({
-    queryKey: ["crawled-events"],
-    queryFn: fetchCrawledEvents,
-    staleTime: 1000 * 60 * 10,
+  const [filters, setFilters] = useState<SearchFilters>(() => ({
+    timeRange: initialTimeRange,
+    customDate: initialCustomDate,
+  }));
+  const [hasSearched, setHasSearched] = useState(initialSearched);
+  const [customDate, setCustomDate] = useState<Date | undefined>(initialCustomDate);
+  const [isLocating, setIsLocating] = useState(false);
+  const [activeLocation, setActiveLocation] = useState<string>();
+  const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
+  const { user, signOut } = useAuth();
+
+  const { data: activities, isLoading } = useQuery({
+    queryKey: ["activities", filters],
+    queryFn: () => searchActivities(filters),
+    enabled: hasSearched,
   });
 
-  const filtered = useMemo(
-    () => filterEvents(allEvents, timeFilter, ageFilter),
-    [allEvents, timeFilter, ageFilter]
-  );
+  const handleQuickAction = (timeRange: SearchFilters["timeRange"]) => {
+    setFilters((f) => ({ ...f, timeRange }));
+    setHasSearched(true);
+    setSearchParams({ t: timeRange }, { replace: true });
+  };
 
-  const toggleTime = (key: TimeFilter) =>
-    setTimeFilter((prev) => (prev === key ? null : key));
+  const handleNearMe = (lat: number, lng: number) => {
+    setIsLocating(false);
+    setActiveLocation("In der Nähe");
+    setFilters((f) => ({ ...f, nearLat: lat, nearLng: lng, locationQuery: undefined, district: undefined }));
+  };
 
-  const toggleAge = (key: AgeFilter) =>
-    setAgeFilter((prev) => (prev === key ? null : key));
+  const handleSearchLocation = (query: string) => {
+    setActiveLocation(query);
+    setFilters((f) => ({ ...f, locationQuery: query, nearLat: undefined, nearLng: undefined, district: undefined }));
+  };
+
+  const handleCustomDate = (date: Date | undefined) => {
+    setCustomDate(date);
+    if (date) {
+      setFilters((f) => ({ ...f, timeRange: "custom", customDate: date }));
+      setHasSearched(true);
+      setSearchParams({ t: "custom", cd: date.toISOString() }, { replace: true });
+    }
+  };
+
+  const timeLabels: Record<string, string> = {
+    now: "Jetzt verfügbar",
+    today: "Heute",
+    tomorrow: "Morgen",
+    custom: customDate ? format(customDate, "EEEE, dd. MMMM", { locale: de }) : "Ergebnisse",
+  };
 
   return (
-    <div className="min-h-screen pb-12">
+    <div className="min-h-screen pb-10">
       {/* Header */}
-      <header className="px-5 pt-8 pb-1 max-w-2xl mx-auto">
-        <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
-          🟠 Rausi
-        </h1>
+      <header className="px-5 pt-8 pb-2 flex items-center justify-between max-w-3xl mx-auto w-full">
+        <Link to="/" onClick={() => { setHasSearched(false); setFilters({ timeRange: "now" }); setSearchParams({}, { replace: true }); }}>
+          <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
+            🟠 Rausi
+          </h1>
+        </Link>
+        {user ? (
+          <button
+            onClick={signOut}
+            className="text-sm text-muted-foreground hover:text-foreground font-medium transition-colors"
+          >
+            Abmelden
+          </button>
+        ) : (
+          <button
+            onClick={() => setShowAuthDialog(true)}
+            className="text-sm text-primary font-semibold hover:underline transition-colors"
+          >
+            Anmelden
+          </button>
+        )}
       </header>
 
-      <div className="px-5 space-y-6 max-w-2xl mx-auto">
+      <div className="px-5 space-y-8 max-w-3xl mx-auto">
         {/* Hero */}
-        <section className="pt-4 pb-2">
-          <h2 className="font-display font-bold text-3xl md:text-4xl leading-[1.15] text-foreground tracking-tight">
-            Was machen mit{" "}
-            <span className="hero-highlight">Kindern</span>{" "}
-            in Berlin?
-          </h2>
-          <p className="mt-3 text-base text-muted-foreground leading-relaxed max-w-md">
-            Finde Aktivitäten in deinem Kiez – genau dann, wenn du raus willst.
-          </p>
-        </section>
+        {!hasSearched && (
+          <section className="pt-6 pb-2 text-center">
+            <h2 className="font-display font-bold text-4xl md:text-5xl leading-[1.15] text-foreground tracking-tight">
+              Was du <span className="hero-highlight">jetzt</span> mit Kindern in Berlin machen kannst.
+            </h2>
+          </section>
+        )}
 
-        {/* Filter chips */}
-        <section className="space-y-3">
-          {/* Time filters */}
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-5 px-5">
-            {TIME_FILTERS.map(({ key, label }) => (
+        {/* Quick Actions */}
+        {!hasSearched && (
+          <section className="space-y-3">
+            <QuickActions onSelect={handleQuickAction} />
+            
+            {/* Custom date picker */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="quick-action-btn w-full">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-muted flex items-center justify-center">
+                      <CalendarIcon className="w-5 h-5 text-muted-foreground" />
+                    </div>
+                    <div className="text-left">
+                      <span className="font-display font-semibold text-base text-card-foreground block">
+                        Datum wählen
+                      </span>
+                      <span className="text-sm text-muted-foreground">
+                        {customDate 
+                          ? format(customDate, "EEEE, dd. MMM", { locale: de })
+                          : "Wähle ein Datum"}
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={customDate}
+                  onSelect={handleCustomDate}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                />
+              </PopoverContent>
+            </Popover>
+          </section>
+        )}
+
+        {/* CTA: Sign up to save */}
+        {!hasSearched && !user && (
+          <section
+            className="relative rounded-2xl border border-primary/20 bg-card p-5 cursor-pointer group hover:border-primary/40 transition-all"
+            onClick={() => setShowAuthDialog(true)}
+          >
+            <div className="absolute left-0 top-3 bottom-3 w-1 rounded-full bg-primary" />
+            <div className="flex items-center gap-4 pl-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-[13px] font-semibold text-primary tracking-wide uppercase">
+                  Nie wieder verpassen
+                </p>
+                <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-1">
+                  Speichere Aktivitäten und wir erinnern dich rechtzeitig
+                </h3>
+                <p className="text-[13px] text-muted-foreground mt-1">
+                  Kostenlos · 10 Sekunden · Kein Spam
+                </p>
+              </div>
+              <div className="shrink-0 w-10 h-10 rounded-xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Bookmark className="w-5 h-5 text-primary-foreground" />
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Compact header when searched */}
+        {hasSearched && (
+          <section className="pt-2">
+            <h2 className="font-display font-bold text-2xl leading-tight text-foreground">
+              Was machen mit{" "}
+              <span className="hero-highlight">Kindern</span>?
+            </h2>
+          </section>
+        )}
+
+        {/* Time range tabs when searched */}
+        {hasSearched && (
+          <section className="flex gap-2 overflow-x-auto -mx-5 px-5 scrollbar-hide pb-1">
+            {(["now", "today", "tomorrow"] as const).map((key) => (
               <button
                 key={key}
-                className={`filter-chip ${timeFilter === key ? "active" : ""}`}
-                onClick={() => toggleTime(key)}
+                className={`filter-chip ${filters.timeRange === key ? "active" : ""}`}
+                onClick={() => handleQuickAction(key)}
               >
-                {label}
+                {({ now: "Jetzt", today: "Heute", tomorrow: "Morgen" } as const)[key]}
               </button>
             ))}
-          </div>
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className={`filter-chip ${filters.timeRange === "custom" ? "active" : ""}`}>
+                  {customDate ? format(customDate, "dd. MMM", { locale: de }) : "Datum"}
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={customDate}
+                  onSelect={handleCustomDate}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                  disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                />
+              </PopoverContent>
+            </Popover>
+          </section>
+        )}
 
-          {/* Age filters */}
-          <div className="flex gap-2 overflow-x-auto scrollbar-hide pb-1 -mx-5 px-5">
-            {AGE_FILTERS.map(({ key, label }) => (
-              <button
-                key={key}
-                className={`filter-chip ${ageFilter === key ? "active" : ""}`}
-                onClick={() => toggleAge(key)}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* Location */}
+        {hasSearched && (
+          <section>
+            <LocationFilter
+              onNearMe={handleNearMe}
+              onSearchLocation={handleSearchLocation}
+              isLocating={isLocating}
+              activeLocation={activeLocation}
+            />
+          </section>
+        )}
+
+        {/* Filters */}
+        {hasSearched && (
+          <section>
+            <FilterChips filters={filters} onChange={(f) => setFilters(f)} />
+          </section>
+        )}
 
         {/* Results */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display font-semibold text-lg text-foreground">
-              {timeFilter === "jetzt"
-                ? "Jetzt verfügbar"
-                : timeFilter === "nachmittag"
-                ? "Heute Nachmittag"
-                : timeFilter === "morgen"
-                ? "Morgen"
-                : "Alle Aktivitäten"}
-            </h3>
-            {!isLoading && (
-              <span className="text-sm text-muted-foreground font-medium">
-                {filtered.length}{" "}
-                {filtered.length === 1 ? "Ergebnis" : "Ergebnisse"}
-              </span>
-            )}
-          </div>
+        {hasSearched && (
+          <section>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-display font-bold text-lg">
+                {timeLabels[filters.timeRange]}
+              </h2>
+              {activities && activities.length > 0 && (
+                <span className="text-sm text-muted-foreground font-medium">
+                  {activities.length} {activities.length === 1 ? "Ergebnis" : "Ergebnisse"}
+                </span>
+              )}
+            </div>
 
-          {isLoading ? (
-            <div className="space-y-4">
-              {[1, 2, 3, 4].map((i) => (
-                <div
-                  key={i}
-                  className="h-40 rounded-2xl bg-muted animate-pulse"
-                />
-              ))}
-            </div>
-          ) : filtered.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4">
-              {filtered.map((event, i) => (
-                <div
-                  key={event.id}
-                  className="animate-fade-in"
-                  style={{ animationDelay: `${i * 60}ms` }}
-                >
-                  <EventCard event={event} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16">
-              <p className="text-4xl mb-3">🙈</p>
-              <p className="font-display font-semibold text-lg text-foreground">
-                Keine Aktivitäten gefunden
-              </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Probiere einen anderen Filter!
-              </p>
-            </div>
-          )}
-        </section>
+            {isLoading ? (
+              <div className="space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="h-48 rounded-2xl bg-muted animate-pulse" />
+                ))}
+              </div>
+            ) : activities && activities.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {activities.map((activity, i) => (
+                  <div
+                    key={activity.id}
+                    className="animate-fade-in"
+                    style={{ animationDelay: `${i * 80}ms` }}
+                  >
+                    <ActivityCard
+                      activity={activity}
+                      isBookmarked={isBookmarked(activity.id)}
+                      onToggleBookmark={toggle}
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <EmptyState />
+            )}
+          </section>
+        )}
       </div>
+      <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
     </div>
   );
 };
