@@ -108,7 +108,6 @@ const ActivityDetail = () => {
 
         {/* Title */}
         <h1 className="font-display font-bold text-2xl leading-tight text-foreground">
-          {categoryIcon && <span className="mr-2">{categoryIcon}</span>}
           {activity.title}
         </h1>
 
