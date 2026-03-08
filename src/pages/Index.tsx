@@ -140,13 +140,13 @@ const Index = () => {
         {/* Time range tabs when searched */}
         {hasSearched && (
           <section className="flex gap-2 overflow-x-auto -mx-5 px-5 scrollbar-hide pb-1">
-            {(["now", "today_afternoon", "tomorrow_morning"] as const).map((key) => (
+            {(["now", "today", "tomorrow"] as const).map((key) => (
               <button
                 key={key}
                 className={`filter-chip ${filters.timeRange === key ? "active" : ""}`}
                 onClick={() => handleQuickAction(key)}
               >
-                {({ now: "⚡ Jetzt", today_afternoon: "☀️ Heute PM", tomorrow_morning: "🌅 Morgen VM" } as const)[key]}
+                {({ now: "⚡ Jetzt", today: "☀️ Heute", tomorrow: "🌅 Morgen" } as const)[key]}
               </button>
             ))}
             <Popover>
