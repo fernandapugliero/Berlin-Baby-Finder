@@ -56,8 +56,8 @@ const Index = () => {
 
   const timeLabels: Record<string, string> = {
     now: "Jetzt verfügbar",
-    today_afternoon: "Heute Nachmittag",
-    tomorrow_morning: "Morgen Vormittag",
+    today: "Heute",
+    tomorrow: "Morgen",
     custom: customDate ? format(customDate, "EEEE, dd. MMMM", { locale: de }) : "Ergebnisse",
   };
 
