@@ -15,7 +15,6 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
   const startTime = new Date(activity.start_time);
   const endTime = activity.end_time ? new Date(activity.end_time) : null;
   const { label: statusLabel, type: statusType } = getRelativeTimeLabel(startTime, endTime);
-  const categoryIcon = getCategoryIcon(activity.category);
 
   const handleBookmark = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -38,7 +37,7 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
           <div>
             {statusLabel && (
               <span className={statusType === "live" ? "chip chip-live" : "chip chip-soon"}>
-                {statusType === "live" ? "🟢 " : "⏳ "}{statusLabel}
+                {statusLabel}
               </span>
             )}
           </div>
@@ -60,7 +59,6 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
 
         {/* Title */}
         <h3 className="font-display font-bold text-lg leading-tight text-card-foreground group-hover:text-primary transition-colors">
-          {categoryIcon && <span className="mr-1.5">{categoryIcon}</span>}
           {activity.title}
         </h3>
 
@@ -92,7 +90,7 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
         {/* Tags */}
         <div className="flex flex-wrap gap-1.5 pt-1">
           <span className={activity.is_free ? "chip chip-free" : "chip chip-paid"}>
-            {activity.is_free ? "✓ Kostenlos" : activity.price_info || "Kostenpflichtig"}
+            {activity.is_free ? "Kostenlos" : activity.price_info || "Kostenpflichtig"}
           </span>
           <span className="chip chip-district">{activity.district}</span>
           {activity.age_groups.map((age) => (

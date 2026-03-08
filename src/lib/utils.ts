@@ -17,7 +17,7 @@ export function getRelativeTimeLabel(startTime: Date, endTime?: Date | null): { 
   if (now >= startTime && !endTime) {
     return { label: "Läuft gerade", type: "live" };
   }
-  if (diffMin > 0 && diffMin <= 60) {
+  if (diffMin > 0 && diffMin <= 120) {
     return { label: `Beginnt in ${diffMin} Min.`, type: "soon" };
   }
   return { label: "", type: "normal" };

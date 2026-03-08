@@ -82,7 +82,7 @@ const Index = () => {
               in Berlin?
             </h2>
             <p className="text-base text-muted-foreground mt-4 leading-relaxed max-w-sm">
-              Finde Aktivitäten in deinem Kiez – genau dann, wenn du raus willst.
+              Finde Aktivitäten für Kinder – genau dann, wenn du raus willst.
             </p>
           </section>
         )}
