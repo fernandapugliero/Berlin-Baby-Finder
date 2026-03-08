@@ -1,9 +1,12 @@
 import { Clock, MapPin } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { searchActivities } from "@/lib/activity-queries";
 import { formatActivityTime } from "@/lib/utils";
 
 export function HomepagePreview() {
+  const navigate = useNavigate();
+
   const { data: activities } = useQuery({
     queryKey: ["activities", { timeRange: "now" }],
     queryFn: () => searchActivities({ timeRange: "now" }),
@@ -21,7 +24,8 @@ export function HomepagePreview() {
         Heute in deiner Nähe
       </h3>
       <div
-        className="card-activity pointer-events-none"
+        className="card-activity cursor-pointer"
+        onClick={() => navigate(`/activity/${preview.id}`)}
       >
         <div className="h-1.5 bg-secondary" />
         <div className="p-5 space-y-2">
