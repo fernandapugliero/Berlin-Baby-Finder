@@ -21,9 +21,9 @@ export const Footer = () => (
 
       {/* Trust text */}
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground/70">
-        <span>Für Familien in Berlin</span>
+        <span>Für Familien in Berlin gemacht</span>
         <span>·</span>
-        <span>Aktivitäten im Kiez entdecken</span>
+        <span>Entdecke Aktivitäten in deinem Kiez</span>
         <span>·</span>
         <span>Termine und Angebote an einem Ort</span>
       </div>
