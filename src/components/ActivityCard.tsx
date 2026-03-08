@@ -37,7 +37,7 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
           <div>
             {statusLabel && (
               <span className={statusType === "live" ? "chip chip-live" : "chip chip-soon"}>
-                {statusType === "live" ? "🟢 " : "⏳ "}{statusLabel}
+                {statusLabel}
               </span>
             )}
           </div>
