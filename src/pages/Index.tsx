@@ -20,6 +20,8 @@ const Index = () => {
   const [filters, setFilters] = useState<SearchFilters>({ timeRange: "now" });
   const [hasSearched, setHasSearched] = useState(false);
   const [customDate, setCustomDate] = useState<Date | undefined>();
+  const [isLocating, setIsLocating] = useState(false);
+  const [activeLocation, setActiveLocation] = useState<string>();
   const { toggle, isBookmarked } = useBookmarks();
 
   const { data: activities, isLoading } = useQuery({
