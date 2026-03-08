@@ -6,41 +6,42 @@
 
 @layer base {
   :root {
-    --background: 30 33% 97%;
-    --foreground: 220 20% 15%;
+    --background: 40 30% 97%;
+    --foreground: 20 10% 10%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 20% 15%;
+    --card-foreground: 20 10% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 15%;
+    --popover-foreground: 20 10% 10%;
 
-    --primary: 13 100% 67%;
+    --primary: 24 100% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 152 40% 58%;
-    --secondary-foreground: 152 40% 18%;
+    --secondary: 152 55% 45%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 30 15% 93%;
-    --muted-foreground: 220 10% 45%;
+    --muted: 40 20% 92%;
+    --muted-foreground: 20 10% 45%;
 
-    --accent: 43 100% 70%;
-    --accent-foreground: 43 60% 20%;
+    --accent: 45 100% 55%;
+    --accent-foreground: 30 50% 15%;
 
     --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 30 15% 90%;
-    --input: 30 15% 88%;
-    --ring: 13 100% 67%;
+    --border: 40 15% 88%;
+    --input: 40 15% 85%;
+    --ring: 24 100% 50%;
 
     --radius: 1rem;
 
     --font-display: 'Space Grotesk', sans-serif;
     --font-body: 'DM Sans', sans-serif;
 
-    --shadow-card: 0 1px 8px -2px hsl(220 20% 15% / 0.05), 0 2px 4px -2px hsl(220 20% 15% / 0.03);
-    --shadow-card-hover: 0 8px 24px -4px hsl(220 20% 15% / 0.1);
+    --shadow-card: 0 2px 12px -3px hsl(20 10% 10% / 0.08), 0 4px 8px -4px hsl(20 10% 10% / 0.04);
+    --shadow-card-hover: 0 12px 32px -6px hsl(20 10% 10% / 0.15);
+    --shadow-hero: 0 20px 60px -12px hsl(24 100% 50% / 0.25);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -53,25 +54,25 @@
   }
 
   .dark {
-    --background: 220 20% 8%;
-    --foreground: 30 20% 95%;
-    --card: 220 18% 12%;
-    --card-foreground: 30 20% 95%;
-    --popover: 220 18% 12%;
-    --popover-foreground: 30 20% 95%;
-    --primary: 13 100% 67%;
+    --background: 20 15% 6%;
+    --foreground: 40 20% 95%;
+    --card: 20 12% 10%;
+    --card-foreground: 40 20% 95%;
+    --popover: 20 12% 10%;
+    --popover-foreground: 40 20% 95%;
+    --primary: 24 100% 55%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 152 40% 40%;
-    --secondary-foreground: 152 40% 90%;
-    --muted: 220 15% 16%;
-    --muted-foreground: 220 10% 55%;
-    --accent: 43 100% 65%;
-    --accent-foreground: 43 60% 10%;
+    --secondary: 152 55% 40%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 20 12% 15%;
+    --muted-foreground: 20 10% 55%;
+    --accent: 45 100% 55%;
+    --accent-foreground: 30 50% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
-    --border: 220 15% 18%;
-    --input: 220 15% 18%;
-    --ring: 13 100% 67%;
+    --border: 20 12% 18%;
+    --input: 20 12% 18%;
+    --ring: 24 100% 55%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -100,56 +101,69 @@
 
 @layer components {
   .card-activity {
-    @apply bg-card rounded-2xl overflow-hidden transition-all duration-200;
+    @apply bg-card rounded-2xl overflow-hidden transition-all duration-200 border border-border;
     box-shadow: var(--shadow-card);
   }
   .card-activity:hover {
     box-shadow: var(--shadow-card-hover);
-    transform: translateY(-1px);
+    transform: translateY(-2px);
   }
   .card-activity:active {
-    transform: scale(0.99);
+    transform: scale(0.98);
   }
+
   .chip {
-    @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-medium transition-colors;
+    @apply inline-flex items-center px-3 py-1.5 rounded-full text-xs font-semibold transition-colors;
   }
   .chip-free {
-    @apply bg-secondary/15 text-secondary-foreground;
+    @apply bg-secondary text-secondary-foreground;
   }
   .chip-paid {
-    @apply bg-accent/20 text-accent-foreground;
+    @apply bg-accent text-accent-foreground;
   }
   .chip-age {
     @apply bg-muted text-muted-foreground;
   }
   .chip-district {
-    @apply bg-primary/10 text-primary;
+    @apply bg-primary/15 text-primary font-bold;
   }
   .chip-live {
-    @apply bg-secondary/20 text-secondary-foreground font-semibold;
+    @apply bg-secondary text-secondary-foreground font-bold;
   }
   .chip-soon {
-    @apply bg-accent/25 text-accent-foreground font-semibold;
+    @apply bg-accent text-accent-foreground font-bold;
   }
+
   .filter-chip {
-    @apply inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium bg-card border border-border cursor-pointer transition-all whitespace-nowrap;
+    @apply inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm font-semibold bg-card border-2 border-border cursor-pointer transition-all whitespace-nowrap;
     box-shadow: var(--shadow-card);
   }
   .filter-chip:hover {
-    @apply border-primary/30;
+    @apply border-primary;
   }
   .filter-chip.active {
     @apply bg-primary text-primary-foreground border-primary;
+    box-shadow: var(--shadow-hero);
   }
+
   .quick-action-btn {
-    @apply flex flex-col items-start gap-2 p-5 rounded-2xl bg-card border border-border transition-all duration-200 cursor-pointer;
+    @apply flex flex-col items-start gap-2 p-5 rounded-2xl bg-card border-2 border-border transition-all duration-200 cursor-pointer;
     box-shadow: var(--shadow-card);
   }
   .quick-action-btn:hover {
-    @apply border-primary/30;
+    @apply border-primary;
     box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
   }
   .quick-action-btn:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
+  }
+
+  .hero-highlight {
+    @apply relative inline-block;
+  }
+  .hero-highlight::after {
+    content: '';
+    @apply absolute -bottom-1 left-0 w-full h-3 bg-accent/50 -z-10 rounded-sm;
   }
 }
