@@ -121,16 +121,16 @@ export function CrawlerOverridesAdmin() {
     onError: (e) => toast.error(`Fehler: ${e.message}`),
   });
 
-  const openEditor = (eventId: string, title: string, location: string) => {
-    const override = overrideMap.get(eventId);
+  const openEditor = (event: typeof crawlerOnly[number]) => {
+    const override = overrideMap.get(event.id);
     setFormHidden(override?.hidden ?? false);
     setFormPausedUntil(override?.paused_until?.slice(0, 10) ?? "");
-    setFormTitle(override?.title_override ?? "");
-    setFormDescription(override?.description_override ?? "");
-    setFormAge(override?.age_override ?? "");
-    setFormDistrict(override?.district_override ?? "");
+    setFormTitle(override?.title_override ?? event.title);
+    setFormDescription(override?.description_override ?? event.description ?? "");
+    setFormAge(override?.age_override ?? (event.age_groups?.length ? event.age_groups.join(", ") : ""));
+    setFormDistrict(override?.district_override ?? event.district ?? "");
     setFormNotes(override?.notes ?? "");
-    setEditingEvent({ id: eventId, title, location, override });
+    setEditingEvent({ id: event.id, title: event.title, location: event.location_name, override });
   };
 
   const handleSave = () => {
