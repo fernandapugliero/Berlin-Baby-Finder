@@ -18,7 +18,7 @@ export function HomepagePreview() {
   return (
     <section className="space-y-3">
       <h3 className="font-display font-semibold text-base text-muted-foreground">
-        Heute in deinem Kiez
+        Heute in deiner Nähe
       </h3>
       <div
         className="card-activity pointer-events-none"

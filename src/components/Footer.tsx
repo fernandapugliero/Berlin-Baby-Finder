@@ -23,7 +23,7 @@ export const Footer = () => (
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground/70">
         <span>Für Familien in Berlin gemacht</span>
         <span>·</span>
-        <span>Entdecke Aktivitäten in deinem Kiez</span>
+        <span>Entdecke Aktivitäten in deiner Nähe</span>
         <span>·</span>
         <span>Termine und Angebote an einem Ort</span>
       </div>
