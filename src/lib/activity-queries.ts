@@ -8,6 +8,11 @@ interface RawEvent {
   start_time: string;
   end_time: string | null;
   age: string | null;
+  day_of_week: string | null;
+  district: string | null;
+  address: string | null;
+  latitude: number | null;
+  longitude: number | null;
   source_name: string;
   source_url: string;
   venue_name: string;
