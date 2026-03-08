@@ -13,6 +13,7 @@ import { LocationFilter } from "@/components/LocationFilter";
 import { DistrictFilter } from "@/components/DistrictFilter";
 import { HomepagePreview } from "@/components/HomepagePreview";
 import { KindercafeCarousel } from "@/components/KindercafeCarousel";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { searchActivities } from "@/lib/activity-queries";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
