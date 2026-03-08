@@ -37,10 +37,9 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
       // share cancelled or failed, fall through
     }
 
-    // Fallback: copy to clipboard
+    // Fallback: copy to clipboard (URL only)
     try {
-      await navigator.clipboard.writeText(`${text}\n${url}`);
-      console.log("[Share] Copied URL:", url);
+      await navigator.clipboard.writeText(url);
       toast.success("Link kopiert!");
     } catch {
       // Last fallback: WhatsApp
