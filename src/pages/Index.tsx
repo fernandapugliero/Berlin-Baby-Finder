@@ -79,9 +79,6 @@ const Index = () => {
             <h2 className="font-display font-bold text-4xl leading-[1.15] text-foreground tracking-tight">
               Was du <span className="hero-highlight">jetzt</span> mit Kindern in Berlin machen kannst.
             </h2>
-            <p className="text-base text-muted-foreground mt-4 leading-relaxed max-w-sm">
-              Finde Aktivitäten für Kinder – genau dann, wenn du raus willst.
-            </p>
           </section>
         )}
 
