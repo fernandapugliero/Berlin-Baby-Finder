@@ -98,6 +98,48 @@ export type Database = {
         }
         Relationships: []
       }
+      crawler_overrides: {
+        Row: {
+          age_override: string | null
+          created_at: string
+          description_override: string | null
+          district_override: string | null
+          event_key: string
+          hidden: boolean
+          id: string
+          notes: string | null
+          paused_until: string | null
+          title_override: string | null
+          updated_at: string
+        }
+        Insert: {
+          age_override?: string | null
+          created_at?: string
+          description_override?: string | null
+          district_override?: string | null
+          event_key: string
+          hidden?: boolean
+          id?: string
+          notes?: string | null
+          paused_until?: string | null
+          title_override?: string | null
+          updated_at?: string
+        }
+        Update: {
+          age_override?: string | null
+          created_at?: string
+          description_override?: string | null
+          district_override?: string | null
+          event_key?: string
+          hidden?: boolean
+          id?: string
+          notes?: string | null
+          paused_until?: string | null
+          title_override?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       kindercafes: {
         Row: {
           address: string | null
