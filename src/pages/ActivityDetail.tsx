@@ -1,10 +1,12 @@
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Clock, MapPin, ExternalLink, Baby, Tag, Bookmark } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, ExternalLink, Baby, Tag, Bookmark, CalendarPlus, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { formatActivityTime, getRelativeTimeLabel, getAgeLabel } from "@/lib/utils";
+import { getGoogleCalendarUrl, downloadIcs } from "@/lib/calendar";
 import { useBookmarks } from "@/hooks/use-bookmarks";
+import { AuthDialog } from "@/components/AuthDialog";
 
 const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();
