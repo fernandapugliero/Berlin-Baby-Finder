@@ -24,7 +24,8 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
 
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    const url = `${window.location.origin}/activity/${activity.id}`;
+    const baseUrl = window.location.origin || window.location.protocol + '//' + window.location.host;
+    const url = `${baseUrl}/activity/${activity.id}`;
     const text = `${activity.title} – ${activity.location_name}`;
 
     try {
