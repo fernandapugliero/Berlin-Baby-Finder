@@ -59,7 +59,6 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
 
         {/* Title */}
         <h3 className="font-display font-bold text-lg leading-tight text-card-foreground group-hover:text-primary transition-colors">
-          {categoryIcon && <span className="mr-1.5">{categoryIcon}</span>}
           {activity.title}
         </h3>
 
