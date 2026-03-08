@@ -195,6 +195,17 @@ export function formatDistance(meters: number): string {
   return `${(meters / 1000).toFixed(1)} km entfernt`;
 }
 
+function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371000; // meters
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
 export async function searchActivities(filters: SearchFilters) {
   const allEvents = await loadEvents();
   const { start, end } = getTimeRange(filters.timeRange, filters.customDate);
@@ -206,7 +217,6 @@ export async function searchActivities(filters: SearchFilters) {
 
   if (filters.ageGroup) {
     results = results.filter((a) => {
-      // Map simple age filter to matching db age groups
       const ageMap: Record<string, string[]> = {
         "0-1": ["0-6 months", "6-12 months"],
         "1-3": ["1-2 years", "2-3 years"],
@@ -217,7 +227,32 @@ export async function searchActivities(filters: SearchFilters) {
     });
   }
 
-  return results.map((a) => ({ ...a, _distance: null as number | null }));
+  if (filters.district) {
+    results = results.filter((a) => a.district === filters.district);
+  }
+
+  // Calculate distance if user location is available
+  const hasUserLocation = filters.nearLat != null && filters.nearLng != null;
+
+  const withDistance = results.map((a) => {
+    let _distance: number | null = null;
+    if (hasUserLocation && a.latitude != null && a.longitude != null) {
+      _distance = haversineDistance(filters.nearLat!, filters.nearLng!, a.latitude, a.longitude);
+    }
+    return { ...a, _distance };
+  });
+
+  // Sort by distance if location available, otherwise by start_time
+  if (hasUserLocation) {
+    withDistance.sort((a, b) => {
+      if (a._distance == null && b._distance == null) return 0;
+      if (a._distance == null) return 1;
+      if (b._distance == null) return -1;
+      return a._distance - b._distance;
+    });
+  }
+
+  return withDistance;
 }
 
 export async function fetchAllActivities() {
