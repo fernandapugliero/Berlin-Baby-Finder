@@ -29,10 +29,13 @@ export const AGE_GROUPS: BabyAgeGroup[] = [
 ];
 
 export interface SearchFilters {
-  timeRange: "now" | "today_afternoon" | "tomorrow_morning" | "custom";
+  timeRange: "now" | "today" | "tomorrow" | "custom";
   customDate?: Date;
   district?: BerlinDistrict;
   ageGroup?: BabyAgeGroup;
   isFree?: boolean;
   registrationRequired?: boolean;
+  nearLat?: number;
+  nearLng?: number;
+  locationQuery?: string;
 }

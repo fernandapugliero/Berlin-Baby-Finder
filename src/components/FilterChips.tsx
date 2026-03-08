@@ -51,16 +51,6 @@ export function FilterChips({ filters, onChange }: FilterChipsProps) {
         Ohne Anmeldung
       </button>
 
-      {/* District dropdown-style chips */}
-      {BERLIN_DISTRICTS.map((d) => (
-        <button
-          key={d}
-          className={`filter-chip ${filters.district === d ? "active" : ""}`}
-          onClick={() => setDistrict(filters.district === d ? undefined : d)}
-        >
-          {d}
-        </button>
-      ))}
 
       {/* Age chips */}
       {AGE_GROUPS.map((a) => (

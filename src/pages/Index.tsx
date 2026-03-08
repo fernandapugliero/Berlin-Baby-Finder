@@ -8,6 +8,7 @@ import { QuickActions } from "@/components/QuickActions";
 import { FilterChips } from "@/components/FilterChips";
 import { ActivityCard } from "@/components/ActivityCard";
 import { EmptyState } from "@/components/EmptyState";
+import { LocationFilter } from "@/components/LocationFilter";
 import { searchActivities } from "@/lib/activity-queries";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -19,6 +20,8 @@ const Index = () => {
   const [filters, setFilters] = useState<SearchFilters>({ timeRange: "now" });
   const [hasSearched, setHasSearched] = useState(false);
   const [customDate, setCustomDate] = useState<Date | undefined>();
+  const [isLocating, setIsLocating] = useState(false);
+  const [activeLocation, setActiveLocation] = useState<string>();
   const { toggle, isBookmarked } = useBookmarks();
 
   const { data: activities, isLoading } = useQuery({
@@ -32,6 +35,17 @@ const Index = () => {
     setHasSearched(true);
   };
 
+  const handleNearMe = (lat: number, lng: number) => {
+    setIsLocating(false);
+    setActiveLocation("In der Nähe");
+    setFilters((f) => ({ ...f, nearLat: lat, nearLng: lng, locationQuery: undefined, district: undefined }));
+  };
+
+  const handleSearchLocation = (query: string) => {
+    setActiveLocation(query);
+    setFilters((f) => ({ ...f, locationQuery: query, nearLat: undefined, nearLng: undefined, district: undefined }));
+  };
+
   const handleCustomDate = (date: Date | undefined) => {
     setCustomDate(date);
     if (date) {
@@ -42,8 +56,8 @@ const Index = () => {
 
   const timeLabels: Record<string, string> = {
     now: "Jetzt verfügbar",
-    today_afternoon: "Heute Nachmittag",
-    tomorrow_morning: "Morgen Vormittag",
+    today: "Heute",
+    tomorrow: "Morgen",
     custom: customDate ? format(customDate, "EEEE, dd. MMMM", { locale: de }) : "Ergebnisse",
   };
 
@@ -126,13 +140,13 @@ const Index = () => {
         {/* Time range tabs when searched */}
         {hasSearched && (
           <section className="flex gap-2 overflow-x-auto -mx-5 px-5 scrollbar-hide pb-1">
-            {(["now", "today_afternoon", "tomorrow_morning"] as const).map((key) => (
+            {(["now", "today", "tomorrow"] as const).map((key) => (
               <button
                 key={key}
                 className={`filter-chip ${filters.timeRange === key ? "active" : ""}`}
                 onClick={() => handleQuickAction(key)}
               >
-                {({ now: "⚡ Jetzt", today_afternoon: "☀️ Heute PM", tomorrow_morning: "🌅 Morgen VM" } as const)[key]}
+                {({ now: "⚡ Jetzt", today: "☀️ Heute", tomorrow: "🌅 Morgen" } as const)[key]}
               </button>
             ))}
             <Popover>
@@ -152,6 +166,18 @@ const Index = () => {
                 />
               </PopoverContent>
             </Popover>
+          </section>
+        )}
+
+        {/* Location */}
+        {hasSearched && (
+          <section>
+            <LocationFilter
+              onNearMe={handleNearMe}
+              onSearchLocation={handleSearchLocation}
+              isLocating={isLocating}
+              activeLocation={activeLocation}
+            />
           </section>
         )}
 
