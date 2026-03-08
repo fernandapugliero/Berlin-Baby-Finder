@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MapPin, Navigation, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 interface LocationFilterProps {
   onNearMe: (lat: number, lng: number) => void;
@@ -11,13 +12,28 @@ interface LocationFilterProps {
 
 export function LocationFilter({ onNearMe, onSearchLocation, isLocating, activeLocation }: LocationFilterProps) {
   const [query, setQuery] = useState("");
+  const [locating, setLocating] = useState(false);
 
   const handleNearMe = () => {
-    if (!navigator.geolocation) return;
+    if (!navigator.geolocation) {
+      toast.error("Standortdienste werden nicht unterstützt.");
+      return;
+    }
+    setLocating(true);
     navigator.geolocation.getCurrentPosition(
-      (pos) => onNearMe(pos.coords.latitude, pos.coords.longitude),
-      () => alert("Standort konnte nicht ermittelt werden."),
-      { enableHighAccuracy: true, timeout: 8000 }
+      (pos) => {
+        setLocating(false);
+        onNearMe(pos.coords.latitude, pos.coords.longitude);
+      },
+      (err) => {
+        setLocating(false);
+        if (err.code === err.PERMISSION_DENIED) {
+          toast.error("Standortzugriff wurde verweigert. Bitte erlaube den Zugriff in den Browser-Einstellungen.");
+        } else {
+          toast.error("Standort konnte nicht ermittelt werden.");
+        }
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
     );
   };
 
