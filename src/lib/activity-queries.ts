@@ -100,15 +100,39 @@ let cachedEvents: Activity[] | null = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 10 * 60 * 1000;
 
+interface CrawlerOverride {
+  event_key: string;
+  hidden: boolean;
+  paused_until: string | null;
+  title_override: string | null;
+  description_override: string | null;
+  age_override: string | null;
+  district_override: string | null;
+}
+
+async function fetchOverrides(): Promise<Map<string, CrawlerOverride>> {
+  const { data } = await supabase.from("crawler_overrides").select("*");
+  const map = new Map<string, CrawlerOverride>();
+  if (data) {
+    for (const o of data) map.set(o.event_key, o as CrawlerOverride);
+  }
+  return map;
+}
+
 async function loadEvents(): Promise<Activity[]> {
   if (cachedEvents && Date.now() - cacheTimestamp < CACHE_TTL) {
     return cachedEvents;
   }
 
-  const res = await fetch(JSON_URL);
+  const [res, overrides] = await Promise.all([
+    fetch(JSON_URL),
+    fetchOverrides(),
+  ]);
   if (!res.ok) throw new Error("Failed to fetch events");
   const json = await res.json();
   const events: RawEvent[] = json.events ?? [];
+
+  const now = new Date();
 
   cachedEvents = events
     .filter((e) => !isLowQuality(e.title))
@@ -132,16 +156,32 @@ async function loadEvents(): Promise<Activity[]> {
       }
       const stableId = `evt-${Math.abs(hash).toString(36)}`;
 
+      // Apply overrides
+      const override = overrides.get(stableId);
+
+      // Skip hidden or paused events
+      if (override?.hidden) return null;
+      if (override?.paused_until && new Date(override.paused_until) > now) return null;
+
+      const finalTitle = override?.title_override || e.title;
+      const finalDescription = override?.description_override || null;
+      const finalDistrict = override?.district_override && VALID_DISTRICTS.includes(override.district_override)
+        ? override.district_override as Activity["district"]
+        : district;
+      const finalAgeGroups = override?.age_override
+        ? parseAgeGroups(override.age_override)
+        : parseAgeGroups(e.age);
+
       return {
         id: stableId,
-        title: e.title,
-        description: null,
+        title: finalTitle,
+        description: finalDescription,
         start_time: toISOWithTime(nextStart),
         end_time: nextEnd ? toISOWithTime(nextEnd) : null,
         location_name: e.venue_name,
         address: e.address ?? null,
-        district,
-        age_groups: parseAgeGroups(e.age),
+        district: finalDistrict,
+        age_groups: finalAgeGroups,
         is_free: true,
         price_info: null,
         registration_required: false,
@@ -160,6 +200,7 @@ async function loadEvents(): Promise<Activity[]> {
         submitted_by: null,
       };
     })
+    .filter((e): e is Activity => e !== null)
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
 
   cacheTimestamp = Date.now();
