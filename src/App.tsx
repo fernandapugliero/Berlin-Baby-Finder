@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import ActivityDetail from "./pages/ActivityDetail";
 import Admin from "./pages/Admin";
+import EventEinreichen from "./pages/EventEinreichen";
 import UeberRausi from "./pages/UeberRausi";
 import Kontakt from "./pages/Kontakt";
 import Impressum from "./pages/Impressum";
