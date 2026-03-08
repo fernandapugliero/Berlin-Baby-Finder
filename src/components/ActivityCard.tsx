@@ -1,10 +1,11 @@
-import { MapPin, Clock, Bookmark } from "lucide-react";
+import { MapPin, Clock, Bookmark, Navigation } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Activity } from "@/lib/types";
 import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon } from "@/lib/utils";
+import { formatDistance } from "@/lib/activity-queries";
 
 interface ActivityCardProps {
-  activity: Activity;
+  activity: Activity & { _distance?: number | null };
   isBookmarked?: boolean;
   onToggleBookmark?: (id: string) => void;
 }
