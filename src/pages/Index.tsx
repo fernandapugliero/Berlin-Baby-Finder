@@ -155,29 +155,22 @@ const Index = () => {
         {/* CTA: Sign up to save */}
         {!hasSearched && !user && (
           <section
-            className="relative overflow-hidden rounded-2xl bg-foreground p-6 cursor-pointer group transition-transform hover:scale-[1.01]"
+            className="relative rounded-2xl border border-border bg-card p-5 cursor-pointer group hover:shadow-card-hover transition-shadow"
             onClick={() => setShowAuthDialog(true)}
           >
-            {/* Decorative gradient blobs */}
-            <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-primary/30 blur-2xl" />
-            <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-accent/30 blur-2xl" />
-
-            <div className="relative flex items-start gap-4">
-              <div className="w-11 h-11 rounded-xl bg-primary flex items-center justify-center shrink-0 mt-0.5 shadow-lg shadow-primary/30">
-                <Bookmark className="w-5 h-5 text-primary-foreground" />
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-accent/40 flex items-center justify-center shrink-0">
+                <Bookmark className="w-5 h-5 text-accent-foreground" />
               </div>
-              <div className="space-y-1.5 flex-1">
-                <h3 className="font-display font-bold text-base text-background leading-snug">
-                  Speichere Aktivitäten & werde erinnert
+              <div className="flex-1 min-w-0">
+                <h3 className="font-display font-semibold text-[15px] text-card-foreground leading-snug">
+                  Aktivitäten merken & erinnert werden
                 </h3>
-                <p className="text-sm text-background/60 leading-relaxed">
-                  Kostenlos anmelden — Favoriten merken und rechtzeitig vor dem Start benachrichtigt werden.
+                <p className="text-[13px] text-muted-foreground mt-0.5">
+                  Kostenlos anmelden und Favoriten speichern.
                 </p>
-                <span className="inline-flex items-center gap-1 text-sm font-bold text-primary group-hover:gap-2 transition-all pt-1">
-                  Jetzt anmelden
-                  <span className="text-base">→</span>
-                </span>
               </div>
+              <span className="text-primary font-bold text-lg shrink-0 group-hover:translate-x-0.5 transition-transform">→</span>
             </div>
           </section>
         )}
