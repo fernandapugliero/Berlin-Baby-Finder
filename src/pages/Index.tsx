@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Bookmark } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { Link, useSearchParams } from "react-router-dom";
@@ -109,6 +109,27 @@ const Index = () => {
             <h2 className="font-display font-bold text-4xl md:text-5xl leading-[1.15] text-foreground tracking-tight">
               Was du <span className="hero-highlight">jetzt</span> mit Kindern in Berlin machen kannst.
             </h2>
+          </section>
+        )}
+
+        {/* CTA: Sign up to save */}
+        {!hasSearched && !user && (
+          <section
+            className="rounded-2xl bg-gradient-to-br from-primary/10 via-accent/10 to-secondary/10 border border-primary/15 p-6 text-center space-y-3 cursor-pointer hover:shadow-md transition-shadow"
+            onClick={() => setShowAuthDialog(true)}
+          >
+            <div className="w-12 h-12 rounded-xl bg-primary/15 flex items-center justify-center mx-auto">
+              <Bookmark className="w-6 h-6 text-primary" />
+            </div>
+            <h3 className="font-display font-bold text-lg text-foreground">
+              Aktivitäten speichern & erinnert werden
+            </h3>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
+              Melde dich kostenlos an, speichere deine Lieblings-Aktivitäten und werde rechtzeitig erinnert, bevor sie starten.
+            </p>
+            <span className="inline-block text-sm font-semibold text-primary">
+              Kostenlos anmelden →
+            </span>
           </section>
         )}
 
