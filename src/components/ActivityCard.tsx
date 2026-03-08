@@ -1,8 +1,9 @@
-import { MapPin, Clock, Bookmark, Navigation, Repeat } from "lucide-react";
+import { MapPin, Clock, Bookmark, Navigation, Repeat, Share2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Activity } from "@/lib/types";
 import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon, getRecurringDayLabel } from "@/lib/utils";
 import { formatDistance } from "@/lib/activity-queries";
+import { toast } from "sonner";
 
 interface ActivityCardProps {
   activity: Activity & { _distance?: number | null };
@@ -21,6 +22,24 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
     onToggleBookmark?.(activity.id);
   };
 
+  const handleShare = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/activity/${activity.id}`;
+    const text = `${activity.title} – ${activity.location_name}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: activity.title, text, url });
+      } catch {
+        // User cancelled
+      }
+    } else {
+      // Fallback: WhatsApp
+      const waUrl = `https://wa.me/?text=${encodeURIComponent(`${text}\n${url}`)}`;
+      window.open(waUrl, "_blank");
+    }
+  };
+
   return (
     <div
       className="card-activity cursor-pointer group"
@@ -32,7 +51,7 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
       <div className={`h-1.5 ${statusType === "live" ? "bg-secondary" : statusType === "soon" ? "bg-accent" : "bg-primary/30"}`} />
       
       <div className="p-5 space-y-3">
-        {/* Top row: status + bookmark */}
+        {/* Top row: status + actions */}
         <div className="flex items-center justify-between">
           <div>
             {statusLabel && (
@@ -41,20 +60,29 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
               </span>
             )}
           </div>
-          {onToggleBookmark && (
+          <div className="flex items-center gap-1.5">
             <button
-              onClick={handleBookmark}
-              className={`flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-1.5 transition-all ${
-                isBookmarked
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
-              }`}
-              aria-label={isBookmarked ? "Gespeichert" : "Merken"}
+              onClick={handleShare}
+              className="flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-1.5 bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary transition-all"
+              aria-label="Teilen"
             >
-              <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? "fill-current" : ""}`} />
-              {isBookmarked ? "Gemerkt" : "Merken"}
+              <Share2 className="w-3.5 h-3.5" />
             </button>
-          )}
+            {onToggleBookmark && (
+              <button
+                onClick={handleBookmark}
+                className={`flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-1.5 transition-all ${
+                  isBookmarked
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
+                }`}
+                aria-label={isBookmarked ? "Gespeichert" : "Merken"}
+              >
+                <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? "fill-current" : ""}`} />
+                {isBookmarked ? "Gemerkt" : "Merken"}
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Title */}
@@ -81,7 +109,7 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
           </div>
         )}
 
-        {/* Location */}
+        {/* Location + distance */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <MapPin className="w-4 h-4 shrink-0 text-primary" />
           <span className="truncate">{activity.location_name}</span>
