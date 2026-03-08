@@ -146,7 +146,7 @@ const Index = () => {
                 className={`filter-chip ${filters.timeRange === key ? "active" : ""}`}
                 onClick={() => handleQuickAction(key)}
               >
-                {({ now: "⚡ Jetzt", today: "☀️ Heute", tomorrow: "🌅 Morgen" } as const)[key]}
+                {({ now: "Jetzt", today: "Heute", tomorrow: "Morgen" } as const)[key]}
               </button>
             ))}
             <Popover>
