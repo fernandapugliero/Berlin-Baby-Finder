@@ -27,14 +27,21 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
     const url = `${window.location.origin}/activity/${activity.id}`;
     const text = `${activity.title} – ${activity.location_name}`;
 
-    if (navigator.share) {
-      try {
+    try {
+      if (navigator.share) {
         await navigator.share({ title: activity.title, text, url });
-      } catch {
-        // User cancelled
+        return;
       }
-    } else {
-      // Fallback: WhatsApp
+    } catch {
+      // share cancelled or failed, fall through
+    }
+
+    // Fallback: copy to clipboard
+    try {
+      await navigator.clipboard.writeText(`${text}\n${url}`);
+      toast.success("Link kopiert!");
+    } catch {
+      // Last fallback: WhatsApp
       const waUrl = `https://wa.me/?text=${encodeURIComponent(`${text}\n${url}`)}`;
       window.open(waUrl, "_blank");
     }
