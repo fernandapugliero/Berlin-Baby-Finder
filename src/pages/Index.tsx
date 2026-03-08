@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { Footer } from "@/components/Footer";
 import { useQuery } from "@tanstack/react-query";
-import { CalendarIcon, Bookmark } from "lucide-react";
+import { CalendarIcon, Bookmark, Plus } from "lucide-react";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
 import { Link, useSearchParams } from "react-router-dom";
