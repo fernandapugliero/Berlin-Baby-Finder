@@ -77,7 +77,7 @@ const Index = () => {
     <div className="min-h-screen pb-10">
       {/* Header */}
       <header className="px-5 pt-8 pb-2 flex items-center justify-between max-w-3xl mx-auto w-full">
-        <Link to="/" onClick={() => { setHasSearched(false); setFilters({ timeRange: "now" }); }}>
+        <Link to="/" onClick={() => { setHasSearched(false); setFilters({ timeRange: "now" }); setSearchParams({}, { replace: true }); }}>
           <h1 className="font-display text-2xl font-bold tracking-tight text-foreground">
             🟠 Rausi
           </h1>
