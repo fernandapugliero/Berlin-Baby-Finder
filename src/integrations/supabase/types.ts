@@ -98,6 +98,66 @@ export type Database = {
         }
         Relationships: []
       }
+      kindercafes: {
+        Row: {
+          address: string | null
+          contact_email: string | null
+          created_at: string
+          description: string | null
+          district: Database["public"]["Enums"]["berlin_district"]
+          features: string[] | null
+          google_maps_url: string | null
+          id: string
+          image_url: string | null
+          is_approved: boolean
+          is_sponsored: boolean
+          latitude: number | null
+          longitude: number | null
+          name: string
+          submitted_by: string | null
+          updated_at: string
+          website_url: string | null
+        }
+        Insert: {
+          address?: string | null
+          contact_email?: string | null
+          created_at?: string
+          description?: string | null
+          district: Database["public"]["Enums"]["berlin_district"]
+          features?: string[] | null
+          google_maps_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_approved?: boolean
+          is_sponsored?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name: string
+          submitted_by?: string | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Update: {
+          address?: string | null
+          contact_email?: string | null
+          created_at?: string
+          description?: string | null
+          district?: Database["public"]["Enums"]["berlin_district"]
+          features?: string[] | null
+          google_maps_url?: string | null
+          id?: string
+          image_url?: string | null
+          is_approved?: boolean
+          is_sponsored?: boolean
+          latitude?: number | null
+          longitude?: number | null
+          name?: string
+          submitted_by?: string | null
+          updated_at?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
       user_bookmarks: {
         Row: {
           activity_id: string
