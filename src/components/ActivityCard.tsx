@@ -1,7 +1,7 @@
-import { MapPin, Clock, Bookmark, Navigation } from "lucide-react";
+import { MapPin, Clock, Bookmark, Navigation, Repeat } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Activity } from "@/lib/types";
-import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon } from "@/lib/utils";
+import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon, getRecurringDayLabel } from "@/lib/utils";
 import { formatDistance } from "@/lib/activity-queries";
 
 interface ActivityCardProps {
@@ -69,11 +69,17 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
           </p>
         )}
 
-        {/* Time */}
+        {/* Time + recurring */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <Clock className="w-4 h-4 shrink-0 text-primary" />
           <span className="font-medium">{formatActivityTime(startTime, endTime)}</span>
         </div>
+        {activity.recurring && activity.recurrence_rule && (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Repeat className="w-4 h-4 shrink-0 text-accent" />
+            <span className="font-medium">{getRecurringDayLabel(activity.recurrence_rule)}</span>
+          </div>
+        )}
 
         {/* Location */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground">

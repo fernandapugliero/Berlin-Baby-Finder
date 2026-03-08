@@ -1,3 +1,4 @@
+import { supabase } from "@/integrations/supabase/client";
 import type { SearchFilters, Activity } from "./types";
 
 const JSON_URL =
@@ -123,8 +124,16 @@ async function loadEvents(): Promise<Activity[]> {
         ? e.district as Activity["district"]
         : "Mitte" as const;
 
+      // Stable ID based on content hash
+      const idSource = `${e.title}|${e.venue_name}|${e.start_time}`;
+      let hash = 0;
+      for (let c = 0; c < idSource.length; c++) {
+        hash = ((hash << 5) - hash + idSource.charCodeAt(c)) | 0;
+      }
+      const stableId = `evt-${Math.abs(hash).toString(36)}`;
+
       return {
-        id: `evt-${i}`,
+        id: stableId,
         title: e.title,
         description: null,
         start_time: toISOWithTime(nextStart),
@@ -148,6 +157,7 @@ async function loadEvents(): Promise<Activity[]> {
         is_approved: true,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
+        submitted_by: null,
       };
     })
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
@@ -255,9 +265,42 @@ export async function searchActivities(filters: SearchFilters) {
   return withDistance;
 }
 
-export async function fetchAllActivities() {
-  return loadEvents();
+export async function fetchAllActivities(): Promise<Activity[]> {
+  const crawlerEvents = await loadEvents();
+
+  // Also fetch community-submitted events from DB
+  const { data: dbEvents } = await supabase
+    .from("activities")
+    .select("*")
+    .order("start_time", { ascending: true });
+
+  const allEvents = [...crawlerEvents];
+  if (dbEvents) {
+    // Merge DB events (approved ones are visible, unapproved only for admin view)
+    allEvents.push(...dbEvents);
+  }
+
+  // Deduplicate by id
+  const seen = new Set<string>();
+  return allEvents.filter((e) => {
+    if (seen.has(e.id)) return false;
+    seen.add(e.id);
+    return true;
+  });
 }
 
-export async function approveActivity(_id: string) {}
-export async function deleteActivity(_id: string) {}
+export async function approveActivity(id: string) {
+  const { error } = await supabase
+    .from("activities")
+    .update({ is_approved: true })
+    .eq("id", id);
+  if (error) throw error;
+}
+
+export async function deleteActivity(id: string) {
+  const { error } = await supabase
+    .from("activities")
+    .delete()
+    .eq("id", id);
+  if (error) throw error;
+}

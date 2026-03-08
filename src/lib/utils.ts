@@ -68,3 +68,16 @@ export function getCategoryIcon(category?: string | null): string {
   };
   return map[category.toLowerCase()] || "";
 }
+
+export function getRecurringDayLabel(dayOfWeek: string): string {
+  const dayMap: Record<string, string> = {
+    Montag: "Jeden Montag",
+    Dienstag: "Jeden Dienstag",
+    Mittwoch: "Jeden Mittwoch",
+    Donnerstag: "Jeden Donnerstag",
+    Freitag: "Jeden Freitag",
+    Samstag: "Jeden Samstag",
+    Sonntag: "Jeden Sonntag",
+  };
+  return dayMap[dayOfWeek] || dayOfWeek;
+}

@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
-import { fetchAllActivities, approveActivity, deleteActivity } from "@/lib/activity-queries";
+import { approveActivity, deleteActivity } from "@/lib/activity-queries";
+import { supabase } from "@/integrations/supabase/client";
 import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
 
@@ -17,7 +18,14 @@ const Admin = () => {
 
   const { data: activities, isLoading } = useQuery({
     queryKey: ["admin-activities"],
-    queryFn: fetchAllActivities,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("activities")
+        .select("*")
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data;
+    },
   });
 
   const approveMutation = useMutation({
