@@ -1,18 +1,25 @@
-import { MapPin, Clock } from "lucide-react";
+import { MapPin, Clock, Bookmark } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Activity } from "@/lib/types";
 import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon } from "@/lib/utils";
 
 interface ActivityCardProps {
   activity: Activity;
+  isBookmarked?: boolean;
+  onToggleBookmark?: (id: string) => void;
 }
 
-export function ActivityCard({ activity }: ActivityCardProps) {
+export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: ActivityCardProps) {
   const navigate = useNavigate();
   const startTime = new Date(activity.start_time);
   const endTime = activity.end_time ? new Date(activity.end_time) : null;
   const { label: statusLabel, type: statusType } = getRelativeTimeLabel(startTime, endTime);
   const categoryIcon = getCategoryIcon(activity.category);
+
+  const handleBookmark = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onToggleBookmark?.(activity.id);
+  };
 
   return (
     <div
@@ -25,12 +32,30 @@ export function ActivityCard({ activity }: ActivityCardProps) {
       <div className={`h-1.5 ${statusType === "live" ? "bg-secondary" : statusType === "soon" ? "bg-accent" : "bg-primary/30"}`} />
       
       <div className="p-5 space-y-3">
-        {/* Status badge */}
-        {statusLabel && (
-          <span className={statusType === "live" ? "chip chip-live" : "chip chip-soon"}>
-            {statusType === "live" ? "🟢 " : "⏳ "}{statusLabel}
-          </span>
-        )}
+        {/* Top row: status + bookmark */}
+        <div className="flex items-center justify-between">
+          <div>
+            {statusLabel && (
+              <span className={statusType === "live" ? "chip chip-live" : "chip chip-soon"}>
+                {statusType === "live" ? "🟢 " : "⏳ "}{statusLabel}
+              </span>
+            )}
+          </div>
+          {onToggleBookmark && (
+            <button
+              onClick={handleBookmark}
+              className={`flex items-center gap-1 text-xs font-semibold rounded-full px-2.5 py-1.5 transition-all ${
+                isBookmarked
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground hover:bg-primary/10 hover:text-primary"
+              }`}
+              aria-label={isBookmarked ? "Gespeichert" : "Merken"}
+            >
+              <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? "fill-current" : ""}`} />
+              {isBookmarked ? "Gemerkt" : "Merken"}
+            </button>
+          )}
+        </div>
 
         {/* Title */}
         <h3 className="font-display font-bold text-lg leading-tight text-card-foreground group-hover:text-primary transition-colors">
