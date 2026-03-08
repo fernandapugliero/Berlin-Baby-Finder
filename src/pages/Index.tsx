@@ -35,6 +35,17 @@ const Index = () => {
     setHasSearched(true);
   };
 
+  const handleNearMe = (lat: number, lng: number) => {
+    setIsLocating(false);
+    setActiveLocation("In der Nähe");
+    setFilters((f) => ({ ...f, nearLat: lat, nearLng: lng, locationQuery: undefined, district: undefined }));
+  };
+
+  const handleSearchLocation = (query: string) => {
+    setActiveLocation(query);
+    setFilters((f) => ({ ...f, locationQuery: query, nearLat: undefined, nearLng: undefined, district: undefined }));
+  };
+
   const handleCustomDate = (date: Date | undefined) => {
     setCustomDate(date);
     if (date) {
