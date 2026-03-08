@@ -13,6 +13,7 @@ import { LocationFilter } from "@/components/LocationFilter";
 import { DistrictFilter } from "@/components/DistrictFilter";
 import { HomepagePreview } from "@/components/HomepagePreview";
 import { KindercafeCarousel } from "@/components/KindercafeCarousel";
+import { NewsletterSignup } from "@/components/NewsletterSignup";
 import { searchActivities } from "@/lib/activity-queries";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -228,6 +229,10 @@ const Index = () => {
             </section>
           )}
 
+          {/* Newsletter signup */}
+          {!hasSearched && <NewsletterSignup />}
+
+          {/* Compact header when searched */}
           {hasSearched && (
             <section className="pt-2">
               <h2 className="font-display font-bold text-2xl leading-tight text-foreground">

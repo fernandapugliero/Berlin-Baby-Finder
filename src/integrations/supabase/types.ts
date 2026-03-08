@@ -158,6 +158,33 @@ export type Database = {
         }
         Relationships: []
       }
+      newsletter_subscribers: {
+        Row: {
+          created_at: string
+          district: Database["public"]["Enums"]["berlin_district"] | null
+          email: string
+          id: string
+          is_active: boolean
+          unsubscribed_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          district?: Database["public"]["Enums"]["berlin_district"] | null
+          email: string
+          id?: string
+          is_active?: boolean
+          unsubscribed_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          district?: Database["public"]["Enums"]["berlin_district"] | null
+          email?: string
+          id?: string
+          is_active?: boolean
+          unsubscribed_at?: string | null
+        }
+        Relationships: []
+      }
       user_bookmarks: {
         Row: {
           activity_id: string
