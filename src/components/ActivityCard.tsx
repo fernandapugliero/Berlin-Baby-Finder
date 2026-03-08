@@ -40,6 +40,7 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
     // Fallback: copy to clipboard
     try {
       await navigator.clipboard.writeText(`${text}\n${url}`);
+      console.log("[Share] Copied URL:", url);
       toast.success("Link kopiert!");
     } catch {
       // Last fallback: WhatsApp
