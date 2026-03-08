@@ -12,7 +12,6 @@ import UeberRausi from "./pages/UeberRausi";
 import Kontakt from "./pages/Kontakt";
 import Impressum from "./pages/Impressum";
 import Datenschutz from "./pages/Datenschutz";
-import LogoPreview from "./pages/LogoPreview";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
