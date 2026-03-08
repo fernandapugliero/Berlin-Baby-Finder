@@ -255,6 +255,7 @@ const Index = () => {
           </section>
         )}
       </div>
+      <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
     </div>
   );
 };
