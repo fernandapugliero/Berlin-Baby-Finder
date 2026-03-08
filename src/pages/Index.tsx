@@ -173,6 +173,9 @@ const Index = () => {
           {/* Preview card on homepage */}
           {!hasSearched && <HomepagePreview />}
 
+          {/* Kindercafé carousel */}
+          {!hasSearched && <KindercafeCarousel />}
+
           {/* CTA: Sign up to save */}
           {!hasSearched && !user && (
             <section
