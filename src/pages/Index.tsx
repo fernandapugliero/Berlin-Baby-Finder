@@ -239,11 +239,6 @@ const Index = () => {
             </section>
           )}
 
-          {/* District filter when searched */}
-          {hasSearched && (
-            <DistrictFilter value={selectedDistrict} onChange={handleDistrictChange} />
-          )}
-
           {/* Location */}
           {hasSearched && (
             <section>
