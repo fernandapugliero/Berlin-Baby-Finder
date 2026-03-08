@@ -111,32 +111,45 @@ async function loadEvents(): Promise<Activity[]> {
 
   cachedEvents = events
     .filter((e) => !isLowQuality(e.title))
-    .map((e, i) => ({
-      id: `evt-${i}`,
-      title: e.title,
-      description: null,
-      start_time: todayWithTime(e.start_time),
-      end_time: e.end_time ? todayWithTime(e.end_time) : null,
-      location_name: e.venue_name,
-      address: null,
-      district: "Mitte" as const, // default since JSON has no district
-      age_groups: parseAgeGroups(e.age),
-      is_free: true,
-      price_info: null,
-      registration_required: false,
-      registration_url: null,
-      source: e.source_name,
-      source_url: e.source_url,
-      image_url: null,
-      category: null,
-      latitude: null,
-      longitude: null,
-      recurring: null,
-      recurrence_rule: null,
-      is_approved: true,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }))
+    .map((e, i) => {
+      const nextStart = getNextOccurrence(e.day_of_week, e.start_time);
+      let nextEnd: Date | null = null;
+      if (e.end_time) {
+        nextEnd = new Date(nextStart);
+        const [eh, em] = e.end_time.split(":").map(Number);
+        nextEnd.setHours(eh, em, 0, 0);
+      }
+      const district = e.district && VALID_DISTRICTS.includes(e.district)
+        ? e.district as Activity["district"]
+        : "Mitte" as const;
+
+      return {
+        id: `evt-${i}`,
+        title: e.title,
+        description: null,
+        start_time: toISOWithTime(nextStart),
+        end_time: nextEnd ? toISOWithTime(nextEnd) : null,
+        location_name: e.venue_name,
+        address: e.address ?? null,
+        district,
+        age_groups: parseAgeGroups(e.age),
+        is_free: true,
+        price_info: null,
+        registration_required: false,
+        registration_url: null,
+        source: e.source_name,
+        source_url: e.source_url,
+        image_url: null,
+        category: null,
+        latitude: e.latitude ?? null,
+        longitude: e.longitude ?? null,
+        recurring: e.day_of_week ? true : null,
+        recurrence_rule: e.day_of_week ?? null,
+        is_approved: true,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
+    })
     .sort((a, b) => a.start_time.localeCompare(b.start_time));
 
   cacheTimestamp = Date.now();
