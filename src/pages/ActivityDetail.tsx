@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Clock, MapPin, ExternalLink, Baby, Tag, Bookmark } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { formatActivityTime, getRelativeTimeLabel, getAgeLabel, getCategoryIcon } from "@/lib/utils";
+import { formatActivityTime, getRelativeTimeLabel, getAgeLabel } from "@/lib/utils";
 import { useBookmarks } from "@/hooks/use-bookmarks";
 
 const ActivityDetail = () => {
@@ -54,7 +54,7 @@ const ActivityDetail = () => {
   const startTime = new Date(activity.start_time);
   const endTime = activity.end_time ? new Date(activity.end_time) : null;
   const { label: statusLabel, type: statusType } = getRelativeTimeLabel(startTime, endTime);
-  const categoryIcon = getCategoryIcon(activity.category);
+  
   const bookmarked = isBookmarked(activity.id);
 
   return (
@@ -102,13 +102,12 @@ const ActivityDetail = () => {
         {/* Status badge */}
         {statusLabel && (
           <span className={statusType === "live" ? "chip chip-live" : "chip chip-soon"}>
-            {statusType === "live" ? "🟢 " : "⏳ "}{statusLabel}
+            {statusLabel}
           </span>
         )}
 
         {/* Title */}
         <h1 className="font-display font-bold text-2xl leading-tight text-foreground">
-          {categoryIcon && <span className="mr-2">{categoryIcon}</span>}
           {activity.title}
         </h1>
 
