@@ -11,7 +11,7 @@ import { AuthDialog } from "@/components/AuthDialog";
 const ActivityDetail = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { toggle, isBookmarked } = useBookmarks();
+  const { toggle, isBookmarked, showAuthDialog, setShowAuthDialog } = useBookmarks();
 
   const { data: activity, isLoading } = useQuery({
     queryKey: ["activity", id],
