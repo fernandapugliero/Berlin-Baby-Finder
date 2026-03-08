@@ -168,11 +168,6 @@ const Index = () => {
             </section>
           )}
 
-          {/* District filter on homepage */}
-          {!hasSearched && (
-            <DistrictFilter value={selectedDistrict} onChange={handleDistrictChange} />
-          )}
-
           {/* Preview card on homepage */}
           {!hasSearched && <HomepagePreview />}
 
