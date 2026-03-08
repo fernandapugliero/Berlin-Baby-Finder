@@ -282,6 +282,7 @@ const Index = () => {
         )}
       </div>
       <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
+      <Footer />
     </div>
   );
 };
