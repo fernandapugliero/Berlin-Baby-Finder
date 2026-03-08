@@ -168,6 +168,26 @@ const ActivityDetail = () => {
           </div>
         )}
 
+        {/* Calendar export */}
+        <div className="flex gap-3">
+          <a
+            href={getGoogleCalendarUrl(activity)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary text-primary-foreground font-semibold text-sm transition-all active:scale-95"
+          >
+            <CalendarPlus className="w-4 h-4" />
+            Google Calendar
+          </a>
+          <button
+            onClick={() => downloadIcs(activity)}
+            className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-muted text-foreground font-semibold text-sm transition-all active:scale-95 hover:bg-muted/80"
+          >
+            <Download className="w-4 h-4" />
+            .ics
+          </button>
+        </div>
+
         {/* Tags */}
         <div className="flex flex-wrap gap-2">
           <span className="chip chip-district">{activity.district}</span>
@@ -189,6 +209,7 @@ const ActivityDetail = () => {
           </a>
         )}
       </div>
+      <AuthDialog open={showAuthDialog} onOpenChange={setShowAuthDialog} />
     </div>
   );
 };
