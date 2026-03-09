@@ -2,23 +2,60 @@ import { useState } from "react";
 import { Mail, Check, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
+const DISTRICT_OPTIONS = [
+  { value: "berlin", label: "Ganz Berlin" },
+  { value: "kreuzberg", label: "Kreuzberg" },
+  { value: "neukoelln", label: "Neukölln" },
+  { value: "friedrichshain", label: "Friedrichshain" },
+  { value: "mitte", label: "Mitte" },
+  { value: "prenzlauerberg", label: "Prenzlauer Berg" },
+] as const;
+
 export function NewsletterSignup() {
   const [email, setEmail] = useState("");
+  const [selectedDistricts, setSelectedDistricts] = useState<string[]>(["berlin"]);
   const [loading, setLoading] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
 
+  const toggleDistrict = (value: string) => {
+    if (value === "berlin") {
+      // "Ganz Berlin" toggles all off and selects only berlin
+      setSelectedDistricts(prev => 
+        prev.includes("berlin") ? [] : ["berlin"]
+      );
+      return;
+    }
+    setSelectedDistricts(prev => {
+      const without = prev.filter(d => d !== "berlin" && d !== value);
+      if (prev.includes(value)) {
+        return without;
+      }
+      return [...without, value];
+    });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) return;
+    if (!email.trim() || selectedDistricts.length === 0) {
+      if (selectedDistricts.length === 0) {
+        toast.error("Bitte wähle mindestens einen Bezirk aus.");
+      }
+      return;
+    }
 
     setLoading(true);
     try {
       const { error } = await supabase
         .from("newsletter_subscribers")
-        .insert({ email: email.trim().toLowerCase() });
+        .insert({
+          email: email.trim().toLowerCase(),
+          districts: selectedDistricts,
+        });
 
       if (error) {
         if (error.code === "23505") {
@@ -59,7 +96,7 @@ export function NewsletterSignup() {
   }
 
   return (
-    <section className="rounded-2xl border border-primary/20 bg-card p-5 space-y-3" style={{ boxShadow: "var(--shadow-card)" }}>
+    <section className="rounded-2xl border border-primary/20 bg-card p-5 space-y-4" style={{ boxShadow: "var(--shadow-card)" }}>
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shrink-0">
           <Mail className="w-5 h-5 text-primary-foreground" />
@@ -71,6 +108,36 @@ export function NewsletterSignup() {
           <p className="text-xs text-muted-foreground mt-0.5">
             Jeden Morgen 5 Ideen — kostenlos per E-Mail.
           </p>
+        </div>
+      </div>
+
+      {/* District selection */}
+      <div className="space-y-2">
+        <p className="text-xs font-medium text-muted-foreground">
+          Für welche Bezirke interessierst du dich?
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {DISTRICT_OPTIONS.map((district) => {
+            const isChecked = selectedDistricts.includes(district.value);
+            return (
+              <button
+                key={district.value}
+                type="button"
+                onClick={() => toggleDistrict(district.value)}
+                className={`
+                  inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium 
+                  border transition-all cursor-pointer
+                  ${isChecked
+                    ? "bg-primary/10 border-primary/40 text-primary"
+                    : "bg-muted/30 border-border text-muted-foreground hover:border-primary/30"
+                  }
+                `}
+              >
+                {isChecked && <Check className="w-3 h-3" />}
+                {district.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -87,7 +154,7 @@ export function NewsletterSignup() {
           type="submit"
           size="sm"
           className="rounded-full px-5 h-10 shrink-0"
-          disabled={loading}
+          disabled={loading || selectedDistricts.length === 0}
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Anmelden"}
         </Button>
