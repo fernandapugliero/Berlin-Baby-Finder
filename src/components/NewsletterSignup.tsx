@@ -145,6 +145,21 @@ export function NewsletterSignup() {
         </div>
       </div>
 
+      {/* Consent checkbox */}
+      <label className="flex items-start gap-2 cursor-pointer group">
+        <Checkbox
+          checked={consent}
+          onCheckedChange={(checked) => setConsent(checked === true)}
+          className="mt-0.5 shrink-0"
+        />
+        <span className="text-[11px] text-muted-foreground leading-snug">
+          Ich stimme zu, regelmäßig Aktivitäts-Empfehlungen per E-Mail zu erhalten. Ich kann mich jederzeit abmelden.{" "}
+          <a href="/datenschutz" className="underline hover:text-foreground">
+            Datenschutzerklärung
+          </a>
+        </span>
+      </label>
+
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
           type="email"
@@ -158,7 +173,7 @@ export function NewsletterSignup() {
           type="submit"
           size="sm"
           className="rounded-full px-5 h-10 shrink-0"
-          disabled={loading || selectedDistricts.length === 0}
+          disabled={loading || selectedDistricts.length === 0 || !consent}
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Anmelden"}
         </Button>
