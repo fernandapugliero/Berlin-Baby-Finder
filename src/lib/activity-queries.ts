@@ -32,7 +32,7 @@ async function fetchOverrides(): Promise<Map<string, CrawlerOverride>> {
  * Loads and parses crawler events. No manual cache — React Query handles
  * caching via staleTime in each consuming component.
  */
-async function loadEvents(): Promise<Activity[]> {
+async function loadEvents(options?: { includeAll?: boolean }): Promise<Activity[]> {
   const [res, overrides] = await Promise.all([
     fetch(JSON_URL),
     fetchOverrides(),
@@ -41,7 +41,7 @@ async function loadEvents(): Promise<Activity[]> {
   const json = await res.json();
   const events = json.events ?? [];
 
-  return parseRawEvents(events, overrides);
+  return parseRawEvents(events, overrides, options);
 }
 
 export async function searchActivities(filters: SearchFilters) {
@@ -89,6 +89,10 @@ export async function searchActivities(filters: SearchFilters) {
   }
 
   return withDistance;
+}
+
+export async function fetchAllCrawlerEventsForAdmin(): Promise<Activity[]> {
+  return loadEvents({ includeAll: true });
 }
 
 export async function fetchAllActivities(): Promise<Activity[]> {
