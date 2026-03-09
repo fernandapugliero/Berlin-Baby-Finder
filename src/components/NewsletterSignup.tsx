@@ -19,6 +19,7 @@ const DISTRICT_OPTIONS = [
 export function NewsletterSignup() {
   const [email, setEmail] = useState("");
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>(["berlin"]);
+  const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
 
