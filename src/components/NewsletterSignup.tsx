@@ -19,6 +19,7 @@ const DISTRICT_OPTIONS = [
 export function NewsletterSignup() {
   const [email, setEmail] = useState("");
   const [selectedDistricts, setSelectedDistricts] = useState<string[]>(["berlin"]);
+  const [consent, setConsent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
 
@@ -41,9 +42,12 @@ export function NewsletterSignup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || selectedDistricts.length === 0) {
+    if (!email.trim() || selectedDistricts.length === 0 || !consent) {
       if (selectedDistricts.length === 0) {
         toast.error("Bitte wähle mindestens einen Bezirk aus.");
+      }
+      if (!consent) {
+        toast.error("Bitte stimme der Datenschutzerklärung zu.");
       }
       return;
     }
@@ -141,6 +145,21 @@ export function NewsletterSignup() {
         </div>
       </div>
 
+      {/* Consent checkbox */}
+      <label className="flex items-start gap-2 cursor-pointer group">
+        <Checkbox
+          checked={consent}
+          onCheckedChange={(checked) => setConsent(checked === true)}
+          className="mt-0.5 shrink-0"
+        />
+        <span className="text-[11px] text-muted-foreground leading-snug">
+          Ich stimme zu, regelmäßig Aktivitäts-Empfehlungen per E-Mail zu erhalten. Ich kann mich jederzeit abmelden.{" "}
+          <a href="/datenschutz" className="underline hover:text-foreground">
+            Datenschutzerklärung
+          </a>
+        </span>
+      </label>
+
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
           type="email"
@@ -154,7 +173,7 @@ export function NewsletterSignup() {
           type="submit"
           size="sm"
           className="rounded-full px-5 h-10 shrink-0"
-          disabled={loading || selectedDistricts.length === 0}
+          disabled={loading || selectedDistricts.length === 0 || !consent}
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Anmelden"}
         </Button>
