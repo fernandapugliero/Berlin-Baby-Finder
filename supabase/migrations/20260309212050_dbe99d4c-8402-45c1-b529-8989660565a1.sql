@@ -1,0 +1,1 @@
+ALTER TABLE public.newsletter_subscribers ADD COLUMN districts text[] NOT NULL DEFAULT '{}'::text[];
