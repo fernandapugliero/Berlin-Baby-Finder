@@ -204,6 +204,7 @@ export type Database = {
         Row: {
           created_at: string
           district: Database["public"]["Enums"]["berlin_district"] | null
+          districts: string[]
           email: string
           id: string
           is_active: boolean
@@ -212,6 +213,7 @@ export type Database = {
         Insert: {
           created_at?: string
           district?: Database["public"]["Enums"]["berlin_district"] | null
+          districts?: string[]
           email: string
           id?: string
           is_active?: boolean
@@ -220,6 +222,7 @@ export type Database = {
         Update: {
           created_at?: string
           district?: Database["public"]["Enums"]["berlin_district"] | null
+          districts?: string[]
           email?: string
           id?: string
           is_active?: boolean
