@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
-import { fetchAllActivities } from "@/lib/activity-queries";
+import { fetchAllActivities, fetchAllCrawlerEventsForAdmin } from "@/lib/activity-queries";
 import { toast } from "sonner";
 
 interface Override {
