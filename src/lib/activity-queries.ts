@@ -91,6 +91,10 @@ export async function searchActivities(filters: SearchFilters) {
   return withDistance;
 }
 
+export async function fetchAllCrawlerEventsForAdmin(): Promise<Activity[]> {
+  return loadEvents({ includeAll: true });
+}
+
 export async function fetchAllActivities(): Promise<Activity[]> {
   const crawlerEvents = await loadEvents();
 
