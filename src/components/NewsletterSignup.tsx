@@ -42,9 +42,12 @@ export function NewsletterSignup() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim() || selectedDistricts.length === 0) {
+    if (!email.trim() || selectedDistricts.length === 0 || !consent) {
       if (selectedDistricts.length === 0) {
         toast.error("Bitte wähle mindestens einen Bezirk aus.");
+      }
+      if (!consent) {
+        toast.error("Bitte stimme der Datenschutzerklärung zu.");
       }
       return;
     }
