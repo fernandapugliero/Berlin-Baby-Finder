@@ -90,12 +90,14 @@ function getNextOccurrence(dayOfWeek: string | null, timeStr: string): Date {
 
 export function parseRawEvents(
   events: RawEvent[],
-  overrides: Map<string, CrawlerOverride>
+  overrides: Map<string, CrawlerOverride>,
+  options?: { includeAll?: boolean }
 ): Activity[] {
   const now = new Date();
+  const includeAll = options?.includeAll ?? false;
 
   return events
-    .filter((e) => !isLowQuality(e.title))
+    .filter((e) => includeAll || !isLowQuality(e.title))
     .map((e) => {
       const nextStart = getNextOccurrence(e.day_of_week, e.start_time);
       let nextEnd: Date | null = null;
