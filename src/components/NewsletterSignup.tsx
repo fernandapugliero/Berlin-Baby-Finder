@@ -81,14 +81,14 @@ export function NewsletterSignup() {
 
   if (subscribed) {
     return (
-      <section className="rounded-2xl border border-secondary/30 bg-secondary/5 p-5">
+      <section className="rounded-2xl border border-secondary/20 bg-secondary/5 p-5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center shrink-0">
-            <Check className="w-5 h-5 text-secondary-foreground" />
+          <div className="w-8 h-8 rounded-lg bg-secondary/15 flex items-center justify-center shrink-0">
+            <Check className="w-4 h-4 text-secondary" />
           </div>
           <div>
             <h3 className="font-display font-bold text-sm text-card-foreground">
-              Du bist angemeldet! 🎉
+              Du bist angemeldet!
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
               Ab morgen bekommst du jeden Morgen 5 Ideen für den Tag.
