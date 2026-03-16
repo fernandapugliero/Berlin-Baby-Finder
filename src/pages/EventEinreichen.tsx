@@ -33,8 +33,6 @@ type FormValues = z.infer<typeof schema>;
 
 const EventEinreichen = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [showAuth, setShowAuth] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
