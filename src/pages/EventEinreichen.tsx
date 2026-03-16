@@ -11,8 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { AuthDialog } from "@/components/AuthDialog";
 import { BERLIN_DISTRICTS } from "@/lib/types";
 import { toast } from "sonner";
 import type { BerlinDistrict } from "@/lib/types";
