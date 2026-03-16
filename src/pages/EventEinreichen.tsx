@@ -11,8 +11,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Switch } from "@/components/ui/switch";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/hooks/useAuth";
-import { AuthDialog } from "@/components/AuthDialog";
 import { BERLIN_DISTRICTS } from "@/lib/types";
 import { toast } from "sonner";
 import type { BerlinDistrict } from "@/lib/types";
@@ -35,8 +33,6 @@ type FormValues = z.infer<typeof schema>;
 
 const EventEinreichen = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
-  const [showAuth, setShowAuth] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<FormValues>({
@@ -59,11 +55,6 @@ const EventEinreichen = () => {
   const isFree = form.watch("is_free");
 
   const onSubmit = async (values: FormValues) => {
-    if (!user) {
-      setShowAuth(true);
-      return;
-    }
-
     setSubmitting(true);
     try {
       const startDateTime = new Date(`${values.start_date}T${values.start_time}`);
@@ -71,6 +62,8 @@ const EventEinreichen = () => {
       if (values.end_time) {
         endDateTime = new Date(`${values.start_date}T${values.end_time}`);
       }
+
+      const { data: { session } } = await supabase.auth.getSession();
 
       const { error } = await supabase.from("activities").insert({
         title: values.title,
@@ -85,7 +78,7 @@ const EventEinreichen = () => {
         source_url: values.source_url || null,
         source: "community",
         is_approved: false,
-        submitted_by: user.id,
+        submitted_by: session?.user?.id ?? null,
       });
 
       if (error) throw error;
@@ -290,14 +283,13 @@ const EventEinreichen = () => {
                 disabled={submitting}
               >
                 <Send className="w-4 h-4" />
-                {submitting ? "Wird eingereicht…" : user ? "Event einreichen" : "Einloggen & einreichen"}
+                {submitting ? "Wird eingereicht…" : "Event einreichen"}
               </Button>
             </form>
           </Form>
         </div>
       </div>
 
-      <AuthDialog open={showAuth} onOpenChange={setShowAuth} />
     </div>
   );
 };
