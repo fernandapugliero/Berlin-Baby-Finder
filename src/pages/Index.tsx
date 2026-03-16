@@ -229,6 +229,34 @@ const Index = () => {
             </section>
           )}
 
+          {/* Ad banner: FixMyDiaper */}
+          {!hasSearched && (
+            <section>
+              <a
+                href="https://fixmydiaper.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block rounded-2xl border border-border bg-card p-5 group hover:border-primary/30 transition-all"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="shrink-0 w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-xl">
+                    🚼
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Anzeige</p>
+                    <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-0.5">
+                      Wickeltisch in der Nähe finden
+                    </h3>
+                    <p className="text-[13px] text-muted-foreground mt-0.5">
+                      fixmydiaper.com – Öffentliche Wickelmöglichkeiten in Berlin auf einen Blick.
+                    </p>
+                  </div>
+                  <span className="text-muted-foreground group-hover:text-primary transition-colors text-lg">→</span>
+                </div>
+              </a>
+            </section>
+          )}
+
           {/* Newsletter signup */}
           {!hasSearched && <NewsletterSignup />}
 
