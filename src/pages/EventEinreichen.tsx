@@ -55,11 +55,6 @@ const EventEinreichen = () => {
   const isFree = form.watch("is_free");
 
   const onSubmit = async (values: FormValues) => {
-    if (!user) {
-      setShowAuth(true);
-      return;
-    }
-
     setSubmitting(true);
     try {
       const startDateTime = new Date(`${values.start_date}T${values.start_time}`);
@@ -67,6 +62,8 @@ const EventEinreichen = () => {
       if (values.end_time) {
         endDateTime = new Date(`${values.start_date}T${values.end_time}`);
       }
+
+      const { data: { session } } = await supabase.auth.getSession();
 
       const { error } = await supabase.from("activities").insert({
         title: values.title,
@@ -81,7 +78,7 @@ const EventEinreichen = () => {
         source_url: values.source_url || null,
         source: "community",
         is_approved: false,
-        submitted_by: user.id,
+        submitted_by: session?.user?.id ?? null,
       });
 
       if (error) throw error;
