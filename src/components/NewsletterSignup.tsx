@@ -81,14 +81,14 @@ export function NewsletterSignup() {
 
   if (subscribed) {
     return (
-      <section className="rounded-2xl border border-secondary/30 bg-secondary/5 p-5">
+      <section className="rounded-2xl border border-secondary/20 bg-secondary/5 p-5">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center shrink-0">
-            <Check className="w-5 h-5 text-secondary-foreground" />
+          <div className="w-8 h-8 rounded-lg bg-secondary/15 flex items-center justify-center shrink-0">
+            <Check className="w-4 h-4 text-secondary" />
           </div>
           <div>
             <h3 className="font-display font-bold text-sm text-card-foreground">
-              Du bist angemeldet! 🎉
+              Du bist angemeldet!
             </h3>
             <p className="text-xs text-muted-foreground mt-0.5">
               Ab morgen bekommst du jeden Morgen 5 Ideen für den Tag.
@@ -100,25 +100,23 @@ export function NewsletterSignup() {
   }
 
   return (
-    <section className="rounded-2xl border border-primary/20 bg-card p-5 space-y-4" style={{ boxShadow: "var(--shadow-card)" }}>
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shrink-0">
-          <Mail className="w-5 h-5 text-primary-foreground" />
-        </div>
-        <div>
-          <h3 className="font-display font-bold text-base text-card-foreground leading-snug">
-            Heute mit Kindern in Berlin 👶
-          </h3>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Jeden Morgen 5 Ideen — kostenlos per E-Mail.
-          </p>
-        </div>
+    <section className="rounded-2xl border border-border bg-card p-5 space-y-4" style={{ boxShadow: "var(--shadow-card)" }}>
+      <div>
+        <p className="text-[13px] font-semibold text-primary tracking-wide uppercase">
+          Morgens in deiner Inbox
+        </p>
+        <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-1">
+          5 Aktivitäten für heute — kostenlos per E-Mail.
+        </h3>
+        <p className="text-[13px] text-muted-foreground mt-1">
+          Passend zu deinen Bezirken, jeden Morgen neu.
+        </p>
       </div>
 
       {/* District selection */}
       <div className="space-y-2">
         <p className="text-xs font-medium text-muted-foreground">
-          Für welche Bezirke interessierst du dich?
+          Welche Bezirke interessieren dich?
         </p>
         <div className="flex flex-wrap gap-2">
           {DISTRICT_OPTIONS.map((district) => {
@@ -145,21 +143,6 @@ export function NewsletterSignup() {
         </div>
       </div>
 
-      {/* Consent checkbox */}
-      <label className="flex items-start gap-2 cursor-pointer group">
-        <Checkbox
-          checked={consent}
-          onCheckedChange={(checked) => setConsent(checked === true)}
-          className="mt-0.5 shrink-0"
-        />
-        <span className="text-[11px] text-muted-foreground leading-snug">
-          Ich stimme zu, regelmäßig Aktivitäts-Empfehlungen per E-Mail zu erhalten. Ich kann mich jederzeit abmelden.{" "}
-          <a href="/datenschutz" className="underline hover:text-foreground">
-            Datenschutzerklärung
-          </a>
-        </span>
-      </label>
-
       <form onSubmit={handleSubmit} className="flex gap-2">
         <Input
           type="email"
@@ -179,9 +162,20 @@ export function NewsletterSignup() {
         </Button>
       </form>
 
-      <p className="text-[11px] text-muted-foreground">
-        Kein Spam · Jederzeit abmelden
-      </p>
+      {/* Consent checkbox */}
+      <label className="flex items-start gap-2 cursor-pointer">
+        <Checkbox
+          checked={consent}
+          onCheckedChange={(checked) => setConsent(checked === true)}
+          className="mt-0.5 shrink-0"
+        />
+        <span className="text-[11px] text-muted-foreground leading-snug">
+          Ich stimme zu, regelmäßig Empfehlungen per E-Mail zu erhalten. Jederzeit abmeldbar.{" "}
+          <a href="/datenschutz" className="underline hover:text-foreground">
+            Datenschutz
+          </a>
+        </span>
+      </label>
     </section>
   );
 }
