@@ -290,7 +290,6 @@ const EventEinreichen = () => {
         </div>
       </div>
 
-      <AuthDialog open={showAuth} onOpenChange={setShowAuth} />
     </div>
   );
 };
