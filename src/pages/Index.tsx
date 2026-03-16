@@ -236,22 +236,19 @@ const Index = () => {
                 href="https://fixmydiaper.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block rounded-2xl border border-border bg-card p-5 group hover:border-primary/30 transition-all"
+                className="relative block rounded-2xl border border-border/60 bg-muted/30 p-4 group hover:bg-muted/50 transition-all"
               >
-                <div className="flex items-center gap-4">
-                  <div className="shrink-0 w-10 h-10 rounded-xl bg-muted flex items-center justify-center text-xl">
-                    🚼
-                  </div>
+                <p className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-widest mb-2">Anzeige</p>
+                <div className="flex items-center gap-3">
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Anzeige</p>
-                    <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-0.5">
-                      Wickeltisch in der Nähe finden
+                    <h3 className="font-display font-semibold text-sm text-foreground/80 leading-snug">
+                      Wickeltisch in der Nähe finden?
                     </h3>
-                    <p className="text-[13px] text-muted-foreground mt-0.5">
-                      fixmydiaper.com – Öffentliche Wickelmöglichkeiten in Berlin auf einen Blick.
+                    <p className="text-[12px] text-muted-foreground mt-0.5">
+                      Öffentliche Wickelmöglichkeiten in Berlin — fixmydiaper.com
                     </p>
                   </div>
-                  <span className="text-muted-foreground group-hover:text-primary transition-colors text-lg">→</span>
+                  <ExternalLink className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors shrink-0" />
                 </div>
               </a>
             </section>
