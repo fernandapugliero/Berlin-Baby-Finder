@@ -245,7 +245,7 @@ const Index = () => {
                       Wickeltisch in der Nähe finden?
                     </h3>
                     <p className="text-[12px] text-muted-foreground mt-0.5">
-                      Öffentliche Wickelmöglichkeiten in Berlin — fixmydiaper.com
+                      Restaurants, Cafés und öffentliche Orte mit Wickelmöglichkeit in Berlin
                     </p>
                   </div>
                   <ExternalLink className="w-4 h-4 text-muted-foreground/40 group-hover:text-muted-foreground transition-colors shrink-0" />

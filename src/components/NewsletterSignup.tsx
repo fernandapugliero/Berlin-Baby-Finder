@@ -106,10 +106,10 @@ export function NewsletterSignup() {
           Morgens in deiner Inbox
         </p>
         <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-1">
-          5 Aktivitäten für heute — kostenlos per E-Mail.
+          Jeden Morgen die besten Aktivitäten für euren Tag.
         </h3>
         <p className="text-[13px] text-muted-foreground mt-1">
-          Passend zu deinen Bezirken, jeden Morgen neu.
+          Handverlesen für deine Bezirke. Kostenlos, kein Spam.
         </p>
       </div>
 
