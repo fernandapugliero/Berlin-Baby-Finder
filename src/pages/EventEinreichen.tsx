@@ -283,7 +283,7 @@ const EventEinreichen = () => {
                 disabled={submitting}
               >
                 <Send className="w-4 h-4" />
-                {submitting ? "Wird eingereicht…" : user ? "Event einreichen" : "Einloggen & einreichen"}
+                {submitting ? "Wird eingereicht…" : "Event einreichen"}
               </Button>
             </form>
           </Form>
