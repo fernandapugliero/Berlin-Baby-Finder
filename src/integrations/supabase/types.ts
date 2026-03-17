@@ -39,6 +39,8 @@ export type Database = {
           source_url: string | null
           start_time: string
           submitted_by: string | null
+          submitter_email: string | null
+          submitter_name: string | null
           title: string
           updated_at: string
         }
@@ -66,6 +68,8 @@ export type Database = {
           source_url?: string | null
           start_time: string
           submitted_by?: string | null
+          submitter_email?: string | null
+          submitter_name?: string | null
           title: string
           updated_at?: string
         }
@@ -93,6 +97,8 @@ export type Database = {
           source_url?: string | null
           start_time?: string
           submitted_by?: string | null
+          submitter_email?: string | null
+          submitter_name?: string | null
           title?: string
           updated_at?: string
         }

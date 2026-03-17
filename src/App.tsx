@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import ActivityDetail from "./pages/ActivityDetail";
 import Admin from "./pages/Admin";
 import EventEinreichen from "./pages/EventEinreichen";
+import AktivitaetEinreichen from "./pages/AktivitaetEinreichen";
 import KindercafeEinreichen from "./pages/KindercafeEinreichen";
 import KindercafeDetail from "./pages/KindercafeDetail";
 import UeberRausi from "./pages/UeberRausi";
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/activity/:id" element={<ActivityDetail />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/event-einreichen" element={<EventEinreichen />} />
+          <Route path="/aktivitaet-einreichen" element={<AktivitaetEinreichen />} />
           <Route path="/kindercafe-einreichen" element={<KindercafeEinreichen />} />
           <Route path="/kindercafe/:id" element={<KindercafeDetail />} />
           <Route path="/ueber" element={<UeberRausi />} />
