@@ -167,7 +167,7 @@ const EventEinreichen = () => {
                       <FormLabel className="text-xs">Beschreibung</FormLabel>
                       <FormControl>
                         <Textarea
-                          placeholder="Do que se trata o evento? Qual o público-alvo? Compartilhe o máximo de detalhes possível."
+                          placeholder="Worum geht es bei dem Event? Wer ist die Zielgruppe? Teile so viele Details wie möglich."
                           rows={3}
                           {...field}
                         />
