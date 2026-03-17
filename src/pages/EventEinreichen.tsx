@@ -18,6 +18,8 @@ const schema = z.object({
   title: z.string().trim().max(120).optional(),
   description: z.string().trim().max(1000).optional(),
   location_name: z.string().trim().max(120).optional(),
+  submitter_name: z.string().trim().min(1, "Bitte deinen Namen eingeben").max(100),
+  submitter_email: z.string().email("Bitte eine gültige E-Mail eingeben"),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -34,14 +36,14 @@ const EventEinreichen = () => {
       title: "",
       description: "",
       location_name: "",
+      submitter_name: "",
+      submitter_email: "",
     },
   });
 
   const onSubmit = async (values: FormValues) => {
     setSubmitting(true);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-
       const { error } = await supabase.from("activities").insert({
         title: values.title || "Community-Vorschlag",
         description: values.description || null,
@@ -52,7 +54,8 @@ const EventEinreichen = () => {
         start_time: new Date().toISOString(),
         source: "community",
         is_approved: false,
-        submitted_by: session?.user?.id ?? null,
+        submitter_name: values.submitter_name,
+        submitter_email: values.submitter_email,
       });
 
       if (error) throw error;
@@ -73,7 +76,7 @@ const EventEinreichen = () => {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="font-display text-xl font-bold">Aktivität vorschlagen</h1>
+          <h1 className="font-display text-xl font-bold">Event vorschlagen</h1>
           <p className="text-xs text-muted-foreground">Teile deinen Tipp mit der Community</p>
         </div>
       </header>
@@ -91,7 +94,7 @@ const EventEinreichen = () => {
                 name="source_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Link zur Aktivität *</FormLabel>
+                    <FormLabel>Link zum Event *</FormLabel>
                     <FormControl>
                       <Input type="url" placeholder="https://..." {...field} />
                     </FormControl>
@@ -105,7 +108,7 @@ const EventEinreichen = () => {
                 name="is_free"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel>Ist die Aktivität kostenlos? *</FormLabel>
+                    <FormLabel>Ist das Event kostenlos? *</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -127,49 +130,83 @@ const EventEinreichen = () => {
                 )}
               />
 
-              <div className="pt-2 border-t border-border">
-                <p className="text-xs text-muted-foreground mb-3">Optional — hilft uns bei der Prüfung:</p>
+              <div className="border-t border-border" />
 
-                <div className="space-y-3">
-                  <FormField
-                    control={form.control}
-                    name="title"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">Name der Aktivität</FormLabel>
-                        <FormControl>
-                          <Input placeholder="z.B. Krabbelgruppe im Familienzentrum" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
+              <div className="space-y-3">
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Name des Events</FormLabel>
+                      <FormControl>
+                        <Input placeholder="z.B. Baby-Konzert im Familienzentrum" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
 
-                  <FormField
-                    control={form.control}
-                    name="location_name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">Ort</FormLabel>
-                        <FormControl>
-                          <Input placeholder="z.B. Familienzentrum Kreuzberg" {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
+                <FormField
+                  control={form.control}
+                  name="location_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Ort</FormLabel>
+                      <FormControl>
+                        <Input placeholder="z.B. Familienzentrum Kreuzberg" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
 
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel className="text-xs">Kommentar</FormLabel>
-                        <FormControl>
-                          <Textarea placeholder="Was möchtest du uns noch mitteilen?" rows={2} {...field} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
-                </div>
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-xs">Beschreibung</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Do que se trata o evento? Qual o público-alvo? Compartilhe o máximo de detalhes possível."
+                          rows={3}
+                          {...field}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="border-t border-border" />
+
+              <div className="space-y-3">
+                <FormField
+                  control={form.control}
+                  name="submitter_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Dein Name *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Vor- und Nachname" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="submitter_email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Deine E-Mail *</FormLabel>
+                      <FormControl>
+                        <Input type="email" placeholder="deine@email.de" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <Button
@@ -178,7 +215,7 @@ const EventEinreichen = () => {
                 disabled={submitting}
               >
                 <Send className="w-4 h-4" />
-                {submitting ? "Wird gesendet…" : "Vorschlag einreichen"}
+                {submitting ? "Wird gesendet…" : "Event einreichen"}
               </Button>
             </form>
           </Form>
