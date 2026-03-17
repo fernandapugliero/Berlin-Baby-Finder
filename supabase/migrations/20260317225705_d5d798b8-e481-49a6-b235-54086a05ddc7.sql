@@ -1,0 +1,1 @@
+ALTER TABLE public.activities ADD COLUMN submitter_name text, ADD COLUMN submitter_email text;
