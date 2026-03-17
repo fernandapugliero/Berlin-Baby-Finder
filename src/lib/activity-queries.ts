@@ -79,14 +79,22 @@ export async function searchActivities(filters: SearchFilters) {
     return { ...a, _distance };
   });
 
-  if (hasUserLocation) {
-    withDistance.sort((a, b) => {
+  // Sort: free first, then by distance (if available) or time
+  withDistance.sort((a, b) => {
+    // Free events before paid
+    if (a.is_free !== b.is_free) return a.is_free ? -1 : 1;
+
+    // Then by distance if user location available
+    if (hasUserLocation) {
       if (a._distance == null && b._distance == null) return 0;
       if (a._distance == null) return 1;
       if (b._distance == null) return -1;
       return a._distance - b._distance;
-    });
-  }
+    }
+
+    // Otherwise by start time
+    return new Date(a.start_time).getTime() - new Date(b.start_time).getTime();
+  });
 
   return withDistance;
 }
