@@ -7,15 +7,17 @@ import { ArrowLeft, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const schema = z.object({
-  title: z.string().trim().min(3, "Mindestens 3 Zeichen").max(120),
+  source_url: z.string().url("Bitte eine gültige URL eingeben"),
+  is_free: z.enum(["yes", "no"], { required_error: "Bitte auswählen" }),
+  title: z.string().trim().max(120).optional(),
   description: z.string().trim().max(1000).optional(),
-  location_name: z.string().trim().min(2, "Bitte angeben").max(120),
-  source_url: z.string().url("Ungültige URL").or(z.literal("")).optional(),
+  location_name: z.string().trim().max(120).optional(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -27,10 +29,11 @@ const EventEinreichen = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
+      source_url: "",
+      is_free: undefined,
       title: "",
       description: "",
       location_name: "",
-      source_url: "",
     },
   });
 
@@ -40,12 +43,13 @@ const EventEinreichen = () => {
       const { data: { session } } = await supabase.auth.getSession();
 
       const { error } = await supabase.from("activities").insert({
-        title: values.title,
+        title: values.title || "Community-Vorschlag",
         description: values.description || null,
-        location_name: values.location_name,
-        source_url: values.source_url || null,
-        district: "Mitte" as const, // placeholder — admin fills real value
-        start_time: new Date().toISOString(), // placeholder — admin fills real value
+        location_name: values.location_name || "Wird ergänzt",
+        source_url: values.source_url,
+        is_free: values.is_free === "yes",
+        district: "Mitte" as const,
+        start_time: new Date().toISOString(),
         source: "community",
         is_approved: false,
         submitted_by: session?.user?.id ?? null,
@@ -77,59 +81,17 @@ const EventEinreichen = () => {
       <div className="px-5 py-6 max-w-lg mx-auto">
         <div className="bg-card rounded-2xl p-5 border border-border space-y-1" style={{ boxShadow: "var(--shadow-card)" }}>
           <p className="text-sm text-muted-foreground mb-4">
-            Kennt ihr eine tolle Aktivität für Familien in Berlin? Schlagt sie uns vor — wir prüfen und ergänzen die Details.
+            Schick uns einfach den Link — wir kümmern uns um den Rest!
           </p>
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name der Aktivität *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="z.B. Krabbelgruppe im Familienzentrum" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Beschreibung</FormLabel>
-                    <FormControl>
-                      <Textarea placeholder="Was erwartet Eltern und Kinder? Wann findet es statt?" rows={3} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="location_name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ort *</FormLabel>
-                    <FormControl>
-                      <Input placeholder="z.B. Familienzentrum Kreuzberg" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
                 name="source_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Link (optional)</FormLabel>
+                    <FormLabel>Link zur Aktivität *</FormLabel>
                     <FormControl>
                       <Input type="url" placeholder="https://..." {...field} />
                     </FormControl>
@@ -137,6 +99,78 @@ const EventEinreichen = () => {
                   </FormItem>
                 )}
               />
+
+              <FormField
+                control={form.control}
+                name="is_free"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Ist die Aktivität kostenlos? *</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex gap-4"
+                      >
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="yes" id="free-yes" />
+                          <label htmlFor="free-yes" className="text-sm cursor-pointer">Ja, kostenlos</label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="no" id="free-no" />
+                          <label htmlFor="free-no" className="text-sm cursor-pointer">Nein, kostenpflichtig</label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="pt-2 border-t border-border">
+                <p className="text-xs text-muted-foreground mb-3">Optional — hilft uns bei der Prüfung:</p>
+
+                <div className="space-y-3">
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Name der Aktivität</FormLabel>
+                        <FormControl>
+                          <Input placeholder="z.B. Krabbelgruppe im Familienzentrum" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="location_name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Ort</FormLabel>
+                        <FormControl>
+                          <Input placeholder="z.B. Familienzentrum Kreuzberg" {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-xs">Kommentar</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="Was möchtest du uns noch mitteilen?" rows={2} {...field} />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
 
               <Button
                 type="submit"
