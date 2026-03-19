@@ -203,6 +203,32 @@ const Index = () => {
             </section>
           )}
 
+          {/* CTA: Submit activity */}
+          {!hasSearched && (
+            <section
+              className="relative rounded-2xl border border-primary/20 bg-card p-5 cursor-pointer group hover:border-primary/40 transition-all"
+              onClick={() => navigate("/aktivitaet-einreichen")}
+            >
+              <div className="absolute left-0 top-3 bottom-3 w-1 rounded-full bg-primary" />
+              <div className="flex items-center gap-4 pl-3">
+                <div className="flex-1 min-w-0">
+                  <p className="text-[13px] font-semibold text-primary tracking-wide uppercase">
+                    Mitmachen
+                  </p>
+                  <h3 className="font-display font-bold text-base text-card-foreground leading-snug mt-1">
+                    Neue Aktivität cadastrieren oder Korrektur vorschlagen?
+                  </h3>
+                  <p className="text-[13px] text-muted-foreground mt-1">
+                    Hilf dem Rausi zu wachsen und mehr Familien zu erreichen
+                  </p>
+                </div>
+                <div className="shrink-0 w-10 h-10 rounded-xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <Plus className="w-5 h-5 text-primary-foreground" />
+                </div>
+              </div>
+            </section>
+          )}
+
           {/* CTA: Submit event */}
           {!hasSearched && (
             <section
