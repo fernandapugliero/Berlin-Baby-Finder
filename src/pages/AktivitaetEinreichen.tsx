@@ -13,17 +13,28 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const schema = z.object({
-  title: z.string().trim().max(120).optional().or(z.literal("")),
-  location_name: z.string().trim().max(120).optional().or(z.literal("")),
-  date: z.string().optional().or(z.literal("")),
-  start_time_input: z.string().optional().or(z.literal("")),
-  end_time_input: z.string().optional().or(z.literal("")),
-  registration_required: z.enum(["yes", "no"]).optional(),
-  is_free: z.enum(["yes", "no"]).optional(),
-  description: z.string().trim().max(1000).optional().or(z.literal("")),
+  submission_type: z.enum(["new", "correction"], { required_error: "Bitte auswählen" }),
+  title: z.string().trim().min(1, "Bitte den Namen der Aktivität eingeben").max(120),
+  location_name: z.string().trim().min(1, "Bitte den Ort eingeben").max(120),
+  day_of_week: z.string().trim().min(1, "Bitte den Wochentag angeben").max(50),
+  frequency: z.string().trim().min(1, "Bitte die Häufigkeit angeben").max(100),
+  start_time_input: z.string().min(1, "Bitte die Startzeit angeben"),
+  end_time_input: z.string().min(1, "Bitte die Endzeit angeben"),
+  description: z.string().trim().min(1, "Bitte eine Beschreibung eingeben").max(1000),
   source_url: z.string().url("Bitte eine gültige URL eingeben").optional().or(z.literal("")),
-  submitter_name: z.string().trim().max(100).optional().or(z.literal("")),
-  submitter_email: z.string().email("Ungültige E-Mail").optional().or(z.literal("")),
+  is_free: z.enum(["yes", "no"], { required_error: "Bitte auswählen" }),
+  price: z.string().optional().or(z.literal("")),
+  registration_required: z.enum(["yes", "no"], { required_error: "Bitte auswählen" }),
+  submitter_name: z.string().trim().min(1, "Bitte deinen Namen eingeben").max(100),
+  submitter_email: z.string().email("Bitte eine gültige E-Mail eingeben"),
+}).refine((data) => {
+  if (data.is_free === "no") {
+    return data.price && data.price.trim().length > 0;
+  }
+  return true;
+}, {
+  message: "Bitte den Preis angeben",
+  path: ["price"],
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -35,50 +46,49 @@ const AktivitaetEinreichen = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
+      submission_type: undefined,
       title: "",
       location_name: "",
-      date: "",
+      day_of_week: "",
+      frequency: "",
       start_time_input: "",
       end_time_input: "",
-      registration_required: undefined,
-      is_free: undefined,
       description: "",
       source_url: "",
+      is_free: undefined,
+      price: "",
+      registration_required: undefined,
       submitter_name: "",
       submitter_email: "",
     },
   });
 
+  const isFree = form.watch("is_free");
+
   const onSubmit = async (values: FormValues) => {
     setSubmitting(true);
     try {
-      let startTime = new Date().toISOString();
-      let endTime: string | null = null;
-
-      if (values.date) {
-        const date = values.date;
-        const time = values.start_time_input || "00:00";
-        startTime = new Date(`${date}T${time}`).toISOString();
-
-        if (values.end_time_input) {
-          endTime = new Date(`${date}T${values.end_time_input}`).toISOString();
-        }
-      }
+      const descParts = [
+        values.description,
+        `Wochentag: ${values.day_of_week}`,
+        `Häufigkeit: ${values.frequency}`,
+        values.submission_type === "correction" ? "[KORREKTUR einer bestehenden Aktivität]" : "[NEUE Aktivität]",
+      ];
 
       const { error } = await supabase.from("activities").insert({
-        title: values.title || "Community-Vorschlag",
-        description: values.description || null,
-        location_name: values.location_name || "Wird ergänzt",
+        title: values.title,
+        description: descParts.join("\n\n"),
+        location_name: values.location_name,
         source_url: values.source_url || null,
-        is_free: values.is_free === "yes" ? true : values.is_free === "no" ? false : true,
+        is_free: values.is_free === "yes",
+        price_info: values.is_free === "no" && values.price ? `${values.price} €` : null,
         registration_required: values.registration_required === "yes",
         district: "Mitte" as const,
-        start_time: startTime,
-        end_time: endTime,
+        start_time: new Date().toISOString(),
         source: "community",
         is_approved: false,
-        submitter_name: values.submitter_name || null,
-        submitter_email: values.submitter_email || null,
+        submitter_name: values.submitter_name,
+        submitter_email: values.submitter_email,
       });
 
       if (error) throw error;
@@ -99,28 +109,55 @@ const AktivitaetEinreichen = () => {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="font-display text-xl font-bold">Aktivität vorschlagen</h1>
-          <p className="text-xs text-muted-foreground">Teile deinen Tipp mit der Community</p>
+          <h1 className="font-display text-xl font-bold">Aktivität einreichen</h1>
+          <p className="text-xs text-muted-foreground">Hilf dem Rausi zu wachsen</p>
         </div>
       </header>
 
       <div className="px-5 py-6 max-w-lg mx-auto">
         <div className="bg-card rounded-2xl p-5 border border-border space-y-1" style={{ boxShadow: "var(--shadow-card)" }}>
-          <p className="text-sm text-muted-foreground mb-4">
-            Kennst du eine tolle Aktivität für Familien? Alle Felder sind optional — teile so viele Infos wie du möchtest.
-          </p>
-
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              {/* New or Correction */}
+              <FormField
+                control={form.control}
+                name="submission_type"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel>Worum geht es? *</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        className="flex flex-col gap-2"
+                      >
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="new" id="type-new" />
+                          <label htmlFor="type-new" className="text-sm cursor-pointer">Neue Aktivität (noch nicht im Rausi)</label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <RadioGroupItem value="correction" id="type-correction" />
+                          <label htmlFor="type-correction" className="text-sm cursor-pointer">Korrektur einer bestehenden Aktivität</label>
+                        </div>
+                      </RadioGroup>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="border-t border-border" />
+
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Name der Aktivität</FormLabel>
+                    <FormLabel>Name der Aktivität *</FormLabel>
                     <FormControl>
                       <Input placeholder="z.B. Krabbelgruppe im Familienzentrum" {...field} />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -130,23 +167,39 @@ const AktivitaetEinreichen = () => {
                 name="location_name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Ort</FormLabel>
+                    <FormLabel>Ort *</FormLabel>
                     <FormControl>
                       <Input placeholder="z.B. Familienzentrum Kreuzberg" {...field} />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
 
               <FormField
                 control={form.control}
-                name="date"
+                name="day_of_week"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Datum</FormLabel>
+                    <FormLabel>Wochentag *</FormLabel>
                     <FormControl>
-                      <Input type="date" {...field} />
+                      <Input placeholder="z.B. Montag, Mittwoch und Freitag" {...field} />
                     </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="frequency"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Häufigkeit *</FormLabel>
+                    <FormControl>
+                      <Input placeholder="z.B. Wöchentlich, Alle 2 Wochen, Monatlich" {...field} />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -157,10 +210,11 @@ const AktivitaetEinreichen = () => {
                   name="start_time_input"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Beginn</FormLabel>
+                      <FormLabel>Beginn *</FormLabel>
                       <FormControl>
                         <Input type="time" {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -170,10 +224,11 @@ const AktivitaetEinreichen = () => {
                   name="end_time_input"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Ende</FormLabel>
+                      <FormLabel>Ende *</FormLabel>
                       <FormControl>
                         <Input type="time" {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -184,7 +239,7 @@ const AktivitaetEinreichen = () => {
                 name="registration_required"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel>Anmeldung erforderlich?</FormLabel>
+                    <FormLabel>Anmeldung erforderlich? *</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -201,6 +256,7 @@ const AktivitaetEinreichen = () => {
                         </div>
                       </RadioGroup>
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -210,7 +266,7 @@ const AktivitaetEinreichen = () => {
                 name="is_free"
                 render={({ field }) => (
                   <FormItem className="space-y-2">
-                    <FormLabel>Kostenlos?</FormLabel>
+                    <FormLabel>Kostenlos? *</FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
@@ -227,23 +283,41 @@ const AktivitaetEinreichen = () => {
                         </div>
                       </RadioGroup>
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
+
+              {isFree === "no" && (
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Preis in Euro *</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="0" step="0.01" placeholder="z.B. 5.00" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               <FormField
                 control={form.control}
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Beschreibung</FormLabel>
+                    <FormLabel>Beschreibung *</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Worum geht es bei der Aktivität? Für wen ist sie gedacht? Teile so viele Details wie möglich."
+                        placeholder="Worum geht es bei der Aktivität? Für welche Altersgruppe ist sie gedacht? Teile so viele Details wie möglich."
                         rows={3}
                         {...field}
                       />
                     </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -253,7 +327,7 @@ const AktivitaetEinreichen = () => {
                 name="source_url"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Link</FormLabel>
+                    <FormLabel>Link (optional)</FormLabel>
                     <FormControl>
                       <Input type="url" placeholder="https://..." {...field} />
                     </FormControl>
@@ -270,10 +344,11 @@ const AktivitaetEinreichen = () => {
                   name="submitter_name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs">Dein Name</FormLabel>
+                      <FormLabel>Dein Name *</FormLabel>
                       <FormControl>
                         <Input placeholder="Vor- und Nachname" {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
@@ -283,7 +358,7 @@ const AktivitaetEinreichen = () => {
                   name="submitter_email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-xs">Deine E-Mail</FormLabel>
+                      <FormLabel>Deine E-Mail *</FormLabel>
                       <FormControl>
                         <Input type="email" placeholder="deine@email.de" {...field} />
                       </FormControl>

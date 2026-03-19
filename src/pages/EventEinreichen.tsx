@@ -15,11 +15,20 @@ import { toast } from "sonner";
 const schema = z.object({
   source_url: z.string().url("Bitte eine gültige URL eingeben"),
   is_free: z.enum(["yes", "no"], { required_error: "Bitte auswählen" }),
+  price: z.string().optional().or(z.literal("")),
   title: z.string().trim().max(120).optional(),
   description: z.string().trim().max(1000).optional(),
   location_name: z.string().trim().max(120).optional(),
   submitter_name: z.string().trim().min(1, "Bitte deinen Namen eingeben").max(100),
   submitter_email: z.string().email("Bitte eine gültige E-Mail eingeben"),
+}).refine((data) => {
+  if (data.is_free === "no") {
+    return data.price && data.price.trim().length > 0;
+  }
+  return true;
+}, {
+  message: "Bitte den Preis angeben",
+  path: ["price"],
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -33,6 +42,7 @@ const EventEinreichen = () => {
     defaultValues: {
       source_url: "",
       is_free: undefined,
+      price: "",
       title: "",
       description: "",
       location_name: "",
@@ -40,6 +50,8 @@ const EventEinreichen = () => {
       submitter_email: "",
     },
   });
+
+  const isFree = form.watch("is_free");
 
   const onSubmit = async (values: FormValues) => {
     setSubmitting(true);
@@ -50,6 +62,7 @@ const EventEinreichen = () => {
         location_name: values.location_name || "Wird ergänzt",
         source_url: values.source_url,
         is_free: values.is_free === "yes",
+        price_info: values.is_free === "no" && values.price ? `${values.price} €` : null,
         district: "Mitte" as const,
         start_time: new Date().toISOString(),
         source: "community",
@@ -129,6 +142,22 @@ const EventEinreichen = () => {
                   </FormItem>
                 )}
               />
+
+              {isFree === "no" && (
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Preis in Euro *</FormLabel>
+                      <FormControl>
+                        <Input type="number" min="0" step="0.01" placeholder="z.B. 5.00" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
 
               <div className="border-t border-border" />
 
