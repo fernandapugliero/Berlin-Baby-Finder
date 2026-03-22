@@ -1,12 +1,13 @@
-import { MapPin, Clock, Bookmark, Navigation, Repeat, Share2 } from "lucide-react";
+import { MapPin, Clock, Bookmark, Navigation, Repeat, Share2, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Activity } from "@/lib/types";
+import type { AirtableActivity } from "@/lib/airtable";
 import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon, getRecurringDayLabel } from "@/lib/utils";
 import { formatDistance } from "@/lib/activity-queries";
 import { toast } from "sonner";
 
 interface ActivityCardProps {
-  activity: Activity & { _distance?: number | null };
+  activity: (Activity | AirtableActivity) & { _distance?: number | null; _ageLabel?: string | null; _sponsored?: boolean; _recurrenceType?: string | null; _dayOfWeek?: string | null };
   isBookmarked?: boolean;
   onToggleBookmark?: (id: string) => void;
 }
@@ -135,11 +136,21 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
             {activity.is_free ? "Kostenlos" : activity.price_info || "Kostenpflichtig"}
           </span>
           <span className="chip chip-district">{activity.district}</span>
-          {activity.age_groups.map((age) => (
-            <span key={age} className="chip chip-age">
-              {getAgeLabel(age)}
+          {activity._ageLabel ? (
+            <span className="chip chip-age">{activity._ageLabel}</span>
+          ) : (
+            activity.age_groups.map((age) => (
+              <span key={age} className="chip chip-age">
+                {getAgeLabel(age)}
+              </span>
+            ))
+          )}
+          {activity._sponsored && (
+            <span className="chip bg-accent/15 text-accent font-bold flex items-center gap-1">
+              <Star className="w-3 h-3" />
+              Sponsored
             </span>
-          ))}
+          )}
           {activity.registration_required && (
             <span className="chip bg-destructive/15 text-destructive font-bold">
               Anmeldung nötig
