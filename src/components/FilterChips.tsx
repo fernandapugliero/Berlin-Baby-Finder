@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import type { SearchFilters } from "@/lib/types";
 
-const SIMPLE_AGE_GROUPS = ["0-1", "1-3", "3+"] as const;
+const SIMPLE_AGE_GROUPS = ["0-1", "1-3", "3-6"] as const;
 type SimpleAge = typeof SIMPLE_AGE_GROUPS[number];
 
 interface FilterChipsProps {
