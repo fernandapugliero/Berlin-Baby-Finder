@@ -1,12 +1,13 @@
-import { MapPin, Clock, Bookmark, Navigation, Repeat, Share2 } from "lucide-react";
+import { MapPin, Clock, Bookmark, Navigation, Repeat, Share2, Star } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { Activity } from "@/lib/types";
+import type { AirtableActivity } from "@/lib/airtable";
 import { getRelativeTimeLabel, formatActivityTime, getAgeLabel, getCategoryIcon, getRecurringDayLabel } from "@/lib/utils";
 import { formatDistance } from "@/lib/activity-queries";
 import { toast } from "sonner";
 
 interface ActivityCardProps {
-  activity: Activity & { _distance?: number | null };
+  activity: (Activity | AirtableActivity) & { _distance?: number | null; _ageLabel?: string | null; _sponsored?: boolean; _recurrenceType?: string | null; _dayOfWeek?: string | null };
   isBookmarked?: boolean;
   onToggleBookmark?: (id: string) => void;
 }
