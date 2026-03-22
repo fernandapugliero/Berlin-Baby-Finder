@@ -136,11 +136,21 @@ export function ActivityCard({ activity, isBookmarked, onToggleBookmark }: Activ
             {activity.is_free ? "Kostenlos" : activity.price_info || "Kostenpflichtig"}
           </span>
           <span className="chip chip-district">{activity.district}</span>
-          {activity.age_groups.map((age) => (
-            <span key={age} className="chip chip-age">
-              {getAgeLabel(age)}
+          {activity._ageLabel ? (
+            <span className="chip chip-age">{activity._ageLabel}</span>
+          ) : (
+            activity.age_groups.map((age) => (
+              <span key={age} className="chip chip-age">
+                {getAgeLabel(age)}
+              </span>
+            ))
+          )}
+          {activity._sponsored && (
+            <span className="chip bg-accent/15 text-accent font-bold flex items-center gap-1">
+              <Star className="w-3 h-3" />
+              Sponsored
             </span>
-          ))}
+          )}
           {activity.registration_required && (
             <span className="chip bg-destructive/15 text-destructive font-bold">
               Anmeldung nötig

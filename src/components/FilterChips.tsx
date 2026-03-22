@@ -30,7 +30,7 @@ export function FilterChips({ filters, onChange }: FilterChipsProps) {
   const ageLabels: Record<SimpleAge, string> = {
     "0-1": "0–1 J.",
     "1-3": "1–3 J.",
-    "3+": "3+ J.",
+    "3-6": "3–6 J.",
   };
 
   return (
