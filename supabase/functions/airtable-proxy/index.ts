@@ -7,6 +7,17 @@ const corsHeaders = {
 };
 
 const BASE_ID = "appjWF7WnC8DRWaXM";
+const EVENT_TABLE_CANDIDATES = ["Events", "Activities"];
+const VENUE_TABLE_CANDIDATES = ["Venues", "Venue"];
+
+function normalizePat(rawPat: string | null): string {
+  if (!rawPat) return "";
+
+  return rawPat
+    .trim()
+    .replace(/^Bearer\s+/i, "")
+    .replace(/^['"]+|['"]+$/g, "");
+}
 
 async function fetchAllRecords(tableName: string, pat: string) {
   const records: any[] = [];
@@ -34,45 +45,69 @@ async function fetchAllRecords(tableName: string, pat: string) {
   return records;
 }
 
+async function fetchFirstAvailableTable(tableNames: string[], pat: string, required = true) {
+  let lastError: Error | null = null;
+
+  for (const tableName of tableNames) {
+    try {
+      const records = await fetchAllRecords(tableName, pat);
+      return { tableName, records };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+
+      if (message.includes("[401]") || message.includes("AUTHENTICATION_REQUIRED")) {
+        throw error;
+      }
+
+      lastError = error instanceof Error ? error : new Error(message);
+    }
+  }
+
+  if (required) {
+    throw lastError ?? new Error(`No Airtable table found for candidates: ${tableNames.join(", ")}`);
+  }
+
+  return { tableName: null, records: [] as any[] };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const pat = Deno.env.get("AIRTABLE_PAT");
+    const pat = normalizePat(Deno.env.get("AIRTABLE_PAT"));
     if (!pat) {
       return new Response(
         JSON.stringify({ error: "AIRTABLE_PAT not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
 
-    // Fetch Events (required) and Venues (optional)
-    const eventsRaw = await fetchAllRecords("Events", pat);
-    let venuesRaw: any[] = [];
-    try {
-      venuesRaw = await fetchAllRecords("Venues", pat);
-    } catch (e) {
-      console.warn("Venues table fetch failed (optional), continuing without it:", e);
-    }
+    const { records: eventsRaw, tableName: eventTableName } = await fetchFirstAvailableTable(
+      EVENT_TABLE_CANDIDATES,
+      pat,
+      true,
+    );
 
-    // Build venue lookup map by record ID
+    const { records: venuesRaw, tableName: venueTableName } = await fetchFirstAvailableTable(
+      VENUE_TABLE_CANDIDATES,
+      pat,
+      false,
+    );
+
     const venueMap: Record<string, any> = {};
     for (const v of venuesRaw) {
       venueMap[v.id] = v.fields;
     }
 
-    // Map events with resolved venue data
     const events = eventsRaw.map((r: any) => ({
       airtable_id: r.id,
       ...r.fields,
       _venue_resolved: null as any,
     }));
 
-    // Resolve venue lookups
     for (const evt of events) {
-      // Venue field might be a linked record array
       const venueRef = evt["Venue"];
       if (Array.isArray(venueRef) && venueRef.length > 0) {
         const venueData = venueMap[venueRef[0]];
@@ -83,18 +118,25 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ events, venues: venuesRaw.map((v: any) => ({ id: v.id, ...v.fields })) }),
+      JSON.stringify({
+        events,
+        venues: venuesRaw.map((v: any) => ({ id: v.id, ...v.fields })),
+        meta: {
+          eventTableName,
+          venueTableName,
+        },
+      }),
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      }
+      },
     );
   } catch (error: unknown) {
     console.error("Airtable proxy error:", error);
     const msg = error instanceof Error ? error.message : "Unknown error";
     return new Response(
       JSON.stringify({ error: msg }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   }
 });
