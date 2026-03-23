@@ -76,7 +76,9 @@ serve(async (req) => {
   }
 
   try {
-    const pat = normalizePat(Deno.env.get("AIRTABLE_PAT"));
+    const rawPat = Deno.env.get("AIRTABLE_PAT");
+    const pat = normalizePat(rawPat);
+    console.log(`[DEBUG] AIRTABLE_PAT raw length: ${rawPat?.length ?? 0}, normalized length: ${pat.length}, starts with: ${pat.substring(0, 6)}..., ends with: ...${pat.substring(pat.length - 4)}`);
     if (!pat) {
       return new Response(
         JSON.stringify({ error: "AIRTABLE_PAT not configured" }),
