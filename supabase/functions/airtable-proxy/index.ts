@@ -48,11 +48,14 @@ serve(async (req) => {
       );
     }
 
-    // Fetch both tables in parallel
-    const [eventsRaw, venuesRaw] = await Promise.all([
-      fetchAllRecords("Events", pat),
-      fetchAllRecords("Venues", pat),
-    ]);
+    // Fetch Events (required) and Venues (optional)
+    const eventsRaw = await fetchAllRecords("Events", pat);
+    let venuesRaw: any[] = [];
+    try {
+      venuesRaw = await fetchAllRecords("Venues", pat);
+    } catch (e) {
+      console.warn("Venues table fetch failed (optional), continuing without it:", e);
+    }
 
     // Build venue lookup map by record ID
     const venueMap: Record<string, any> = {};
