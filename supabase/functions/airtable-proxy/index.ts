@@ -3,33 +3,32 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
+    "authorization, x-client-info, apikey, content-type",
 };
 
+// 🔥 CONFIG FIXA (para funcionar agora)
 const BASE_ID = "appYjp7dTNaLjuaGB";
-const EVENT_TABLE_CANDIDATES = ["Events", "Activities"];
-const VENUE_TABLE_CANDIDATES = ["Venues", "Venue"];
+const AIRTABLE_PAT = "patV5b9FiOhOSIeUK";
 
-function normalizePat(rawPat: string | null): string {
-  if (!rawPat) return "";
+const EVENT_TABLE = "Events / Activities";
+const VENUE_TABLE = "Venues";
 
-  return rawPat
-    .trim()
-    .replace(/^Bearer\s+/i, "")
-    .replace(/^['"]+|['"]+$/g, "");
-}
-
-async function fetchAllRecords(tableName: string, pat: string) {
+async function fetchAllRecords(tableName: string) {
   const records: any[] = [];
   let offset: string | undefined;
 
   do {
-    const url = new URL(`https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(tableName)}`);
+    const url = new URL(
+      `https://api.airtable.com/v0/${BASE_ID}/${encodeURIComponent(tableName)}`
+    );
+
     url.searchParams.set("pageSize", "100");
     if (offset) url.searchParams.set("offset", offset);
 
     const res = await fetch(url.toString(), {
-      headers: { Authorization: `Bearer ${pat}` },
+      headers: {
+        Authorization: `Bearer ${AIRTABLE_PAT}`,
+      },
     });
 
     if (!res.ok) {
@@ -45,100 +44,67 @@ async function fetchAllRecords(tableName: string, pat: string) {
   return records;
 }
 
-async function fetchFirstAvailableTable(tableNames: string[], pat: string, required = true) {
-  let lastError: Error | null = null;
-
-  for (const tableName of tableNames) {
-    try {
-      const records = await fetchAllRecords(tableName, pat);
-      return { tableName, records };
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-
-      if (message.includes("[401]") || message.includes("AUTHENTICATION_REQUIRED")) {
-        throw error;
-      }
-
-      lastError = error instanceof Error ? error : new Error(message);
-    }
-  }
-
-  if (required) {
-    throw lastError ?? new Error(`No Airtable table found for candidates: ${tableNames.join(", ")}`);
-  }
-
-  return { tableName: null, records: [] as any[] };
-}
-
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const rawPat = Deno.env.get("AIRTABLE_PAT");
-    const pat = normalizePat(rawPat);
-    console.log(`[DEBUG] AIRTABLE_PAT raw length: ${rawPat?.length ?? 0}, normalized length: ${pat.length}, starts with: ${pat.substring(0, 6)}..., ends with: ...${pat.substring(pat.length - 4)}`);
-    if (!pat) {
-      return new Response(
-        JSON.stringify({ error: "AIRTABLE_PAT not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
-      );
-    }
+    console.log("🚀 Fetching Airtable data...");
 
-    const { records: eventsRaw, tableName: eventTableName } = await fetchFirstAvailableTable(
-      EVENT_TABLE_CANDIDATES,
-      pat,
-      true,
-    );
+    const eventsRaw = await fetchAllRecords(EVENT_TABLE);
+    const venuesRaw = await fetchAllRecords(VENUE_TABLE);
 
-    const { records: venuesRaw, tableName: venueTableName } = await fetchFirstAvailableTable(
-      VENUE_TABLE_CANDIDATES,
-      pat,
-      false,
-    );
-
+    // 🔗 mapear venues
     const venueMap: Record<string, any> = {};
     for (const v of venuesRaw) {
       venueMap[v.id] = v.fields;
     }
 
-    const events = eventsRaw.map((r: any) => ({
-      airtable_id: r.id,
-      ...r.fields,
-      _venue_resolved: null as any,
-    }));
+    // 🔗 juntar venue dentro do evento
+    const events = eventsRaw.map((r: any) => {
+      const evt = {
+        airtable_id: r.id,
+        ...r.fields,
+        _venue_resolved: null as any,
+      };
 
-    for (const evt of events) {
       const venueRef = evt["Venue"];
+
       if (Array.isArray(venueRef) && venueRef.length > 0) {
         const venueData = venueMap[venueRef[0]];
         if (venueData) {
           evt._venue_resolved = venueData;
         }
       }
-    }
+
+      return evt;
+    });
 
     return new Response(
       JSON.stringify({
         events,
-        venues: venuesRaw.map((v: any) => ({ id: v.id, ...v.fields })),
-        meta: {
-          eventTableName,
-          venueTableName,
-        },
+        venues: venuesRaw.map((v: any) => ({
+          id: v.id,
+          ...v.fields,
+        })),
       }),
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
+      }
     );
   } catch (error: unknown) {
-    console.error("Airtable proxy error:", error);
+    console.error("❌ Airtable proxy error:", error);
+
     const msg = error instanceof Error ? error.message : "Unknown error";
+
     return new Response(
       JSON.stringify({ error: msg }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      }
     );
   }
 });
