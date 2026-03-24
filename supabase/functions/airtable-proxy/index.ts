@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const BASE_ID = "appYjp7dTNaLjuaGB";
+const BASE_ID = "appjWF7WnC8DRWaXM";
 const EVENT_TABLE_CANDIDATES = ["Events", "Activities"];
 const VENUE_TABLE_CANDIDATES = ["Venues", "Venue"];
 
