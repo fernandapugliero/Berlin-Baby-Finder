@@ -101,7 +101,7 @@ const Index = () => {
           <Link to="/" onClick={() => { setHasSearched(false); setFilters({ timeRange: "now" }); setSearchParams({}, { replace: true }); }}>
             <h1 className="font-display text-2xl font-bold tracking-tight text-foreground flex items-center gap-1.5">
               <span className="text-2xl">🟠</span>
-              Rausi
+               Rausmi
             </h1>
           </Link>
           {user ? (
