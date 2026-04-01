@@ -7,7 +7,7 @@ export const Footer = () => (
       <div className="space-y-2">
         <span className="font-display text-lg font-bold text-foreground">🟠 Rausmi</span>
         <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
-          Rausi hilft Familien in Berlin, passende Aktivitäten für Babys, Kleinkinder und Kita-Kinder zu finden.
+          Rausmi hilft Familien in Berlin, passende Aktivitäten für Babys, Kleinkinder und Kita-Kinder zu finden.
         </p>
       </div>
 
