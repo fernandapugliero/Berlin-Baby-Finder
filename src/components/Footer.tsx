@@ -5,7 +5,7 @@ export const Footer = () => (
     <div className="max-w-3xl mx-auto px-5 py-10 space-y-8">
       {/* Brand */}
       <div className="space-y-2">
-        <span className="font-display text-lg font-bold text-foreground">🟠 Rausi</span>
+        <span className="font-display text-lg font-bold text-foreground">🟠 Rausmi</span>
         <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
           Rausi hilft Familien in Berlin, passende Aktivitäten für Babys, Kleinkinder und Kita-Kinder zu finden.
         </p>
