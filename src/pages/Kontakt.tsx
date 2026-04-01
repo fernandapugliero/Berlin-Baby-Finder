@@ -15,7 +15,7 @@ const Kontakt = () => {
   return (
     <PageShell title="Kontakt">
       <p className="text-lg text-muted-foreground leading-relaxed">
-        Du kennst ein tolles Angebot für Familien in Berlin oder möchtest mit Rausi Kontakt aufnehmen? Schreib uns.
+        Du kennst ein tolles Angebot für Familien in Berlin oder möchtest mit Rausmi Kontakt aufnehmen? Schreib uns.
       </p>
 
       <div className="rounded-2xl border border-border bg-card p-6 space-y-2" style={{ boxShadow: "var(--shadow-card)" }}>
