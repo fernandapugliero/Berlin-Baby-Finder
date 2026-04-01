@@ -30,7 +30,7 @@ const sections = [
 const Datenschutz = () => (
   <PageShell title="Datenschutz">
     <p className="text-lg text-muted-foreground leading-relaxed">
-      Der Schutz deiner Daten ist uns wichtig. Diese Seite informiert dich darüber, welche personenbezogenen Daten auf Rausi verarbeitet werden.
+      Der Schutz deiner Daten ist uns wichtig. Diese Seite informiert dich darüber, welche personenbezogenen Daten auf Rausmi verarbeitet werden.
     </p>
 
     <div className="space-y-8">
