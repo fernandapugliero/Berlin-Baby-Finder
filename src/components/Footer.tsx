@@ -13,7 +13,7 @@ export const Footer = () => (
 
       {/* Nav links */}
       <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium">
-        <Link to="/ueber" className="text-muted-foreground hover:text-foreground transition-colors py-1">Über Rausi</Link>
+        <Link to="/ueber" className="text-muted-foreground hover:text-foreground transition-colors py-1">Über Rausmi</Link>
         <Link to="/kontakt" className="text-muted-foreground hover:text-foreground transition-colors py-1">Kontakt</Link>
         <Link to="/impressum" className="text-muted-foreground hover:text-foreground transition-colors py-1">Impressum</Link>
         <Link to="/datenschutz" className="text-muted-foreground hover:text-foreground transition-colors py-1">Datenschutz</Link>
