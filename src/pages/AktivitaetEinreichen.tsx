@@ -110,7 +110,7 @@ const AktivitaetEinreichen = () => {
         </Button>
         <div>
           <h1 className="font-display text-xl font-bold">Aktivität einreichen</h1>
-          <p className="text-xs text-muted-foreground">Hilf dem Rausi zu wachsen</p>
+          <p className="text-xs text-muted-foreground">Hilf dem Rausmi zu wachsen</p>
         </div>
       </header>
 

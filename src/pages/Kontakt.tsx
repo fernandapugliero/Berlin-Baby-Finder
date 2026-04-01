@@ -15,7 +15,7 @@ const Kontakt = () => {
   return (
     <PageShell title="Kontakt">
       <p className="text-lg text-muted-foreground leading-relaxed">
-        Du kennst ein tolles Angebot für Familien in Berlin oder möchtest mit Rausi Kontakt aufnehmen? Schreib uns.
+        Du kennst ein tolles Angebot für Familien in Berlin oder möchtest mit Rausmi Kontakt aufnehmen? Schreib uns.
       </p>
 
       <div className="rounded-2xl border border-border bg-card p-6 space-y-2" style={{ boxShadow: "var(--shadow-card)" }}>
@@ -23,8 +23,8 @@ const Kontakt = () => {
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
             <Mail className="w-5 h-5 text-primary" />
           </div>
-          <a href="mailto:hallo@rausi.de" className="font-display font-semibold text-foreground hover:text-primary transition-colors">
-            hallo@rausi.de
+          <a href="mailto:hallo@rausmi.de" className="font-display font-semibold text-foreground hover:text-primary transition-colors">
+            hallo@rausmi.de
           </a>
         </div>
       </div>
@@ -32,7 +32,7 @@ const Kontakt = () => {
       <section className="space-y-3">
         <h2 className="font-display font-bold text-xl text-foreground">Für Familienzentren und Veranstalter</h2>
         <p className="text-muted-foreground leading-relaxed">
-          Ihr möchtet, dass eure Angebote auf Rausi erscheinen? Meldet euch gern.
+          Ihr möchtet, dass eure Angebote auf Rausmi erscheinen? Meldet euch gern.
         </p>
       </section>
 

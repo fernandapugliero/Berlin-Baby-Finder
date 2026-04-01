@@ -63,7 +63,7 @@ const KindercafeDetail = () => {
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <Link to="/" className="font-display font-semibold text-sm text-muted-foreground hover:text-primary transition-colors">
-          🟠 Rausi
+          🟠 Rausmi
         </Link>
       </header>
 

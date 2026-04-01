@@ -5,15 +5,15 @@ export const Footer = () => (
     <div className="max-w-3xl mx-auto px-5 py-10 space-y-8">
       {/* Brand */}
       <div className="space-y-2">
-        <span className="font-display text-lg font-bold text-foreground">🟠 Rausi</span>
+        <span className="font-display text-lg font-bold text-foreground">🟠 Rausmi</span>
         <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
-          Rausi hilft Familien in Berlin, passende Aktivitäten für Babys, Kleinkinder und Kita-Kinder zu finden.
+          Rausmi hilft Familien in Berlin, passende Aktivitäten für Babys, Kleinkinder und Kita-Kinder zu finden.
         </p>
       </div>
 
       {/* Nav links */}
       <nav className="flex flex-wrap gap-x-6 gap-y-3 text-sm font-medium">
-        <Link to="/ueber" className="text-muted-foreground hover:text-foreground transition-colors py-1">Über Rausi</Link>
+        <Link to="/ueber" className="text-muted-foreground hover:text-foreground transition-colors py-1">Über Rausmi</Link>
         <Link to="/kontakt" className="text-muted-foreground hover:text-foreground transition-colors py-1">Kontakt</Link>
         <Link to="/impressum" className="text-muted-foreground hover:text-foreground transition-colors py-1">Impressum</Link>
         <Link to="/datenschutz" className="text-muted-foreground hover:text-foreground transition-colors py-1">Datenschutz</Link>
@@ -30,7 +30,7 @@ export const Footer = () => (
 
       {/* Copyright */}
       <p className="text-xs text-muted-foreground/50">
-        Mit ❤️ für Familien in Berlin · © {new Date().getFullYear()} Rausi
+        Mit ❤️ für Familien in Berlin · © {new Date().getFullYear()} Rausmi
       </p>
     </div>
   </footer>
