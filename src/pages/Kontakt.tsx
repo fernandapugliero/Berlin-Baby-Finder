@@ -32,7 +32,7 @@ const Kontakt = () => {
       <section className="space-y-3">
         <h2 className="font-display font-bold text-xl text-foreground">Für Familienzentren und Veranstalter</h2>
         <p className="text-muted-foreground leading-relaxed">
-          Ihr möchtet, dass eure Angebote auf Rausi erscheinen? Meldet euch gern.
+          Ihr möchtet, dass eure Angebote auf Rausmi erscheinen? Meldet euch gern.
         </p>
       </section>
 

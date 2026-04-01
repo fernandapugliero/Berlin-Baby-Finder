@@ -219,7 +219,7 @@ const Index = () => {
                     Neue Aktivität cadastrieren oder Korrektur vorschlagen?
                   </h3>
                   <p className="text-[13px] text-muted-foreground mt-1">
-                    Hilf dem Rausi zu wachsen und mehr Familien zu erreichen
+                    Hilf dem Rausmi zu wachsen und mehr Familien zu erreichen
                   </p>
                 </div>
                 <div className="shrink-0 w-10 h-10 rounded-xl bg-primary flex items-center justify-center group-hover:scale-110 transition-transform">

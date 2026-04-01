@@ -30,7 +30,7 @@ export const Footer = () => (
 
       {/* Copyright */}
       <p className="text-xs text-muted-foreground/50">
-        Mit ❤️ für Familien in Berlin · © {new Date().getFullYear()} Rausi
+        Mit ❤️ für Familien in Berlin · © {new Date().getFullYear()} Rausmi
       </p>
     </div>
   </footer>

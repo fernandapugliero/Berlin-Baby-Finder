@@ -11,7 +11,7 @@ export const PageShell = ({ title, children }: PageShellProps) => (
   <div className="min-h-screen flex flex-col">
     <header className="px-5 pt-8 pb-2 flex items-center justify-between max-w-3xl mx-auto w-full">
       <Link to="/">
-        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">🟠 Rausi</h2>
+        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground">🟠 Rausmi</h2>
       </Link>
     </header>
 
