@@ -23,8 +23,8 @@ const Kontakt = () => {
           <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
             <Mail className="w-5 h-5 text-primary" />
           </div>
-          <a href="mailto:hallo@rausi.de" className="font-display font-semibold text-foreground hover:text-primary transition-colors">
-            hallo@rausi.de
+          <a href="mailto:hallo@rausmi.de" className="font-display font-semibold text-foreground hover:text-primary transition-colors">
+            hallo@rausmi.de
           </a>
         </div>
       </div>
