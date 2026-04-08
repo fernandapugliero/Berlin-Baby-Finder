@@ -73,7 +73,7 @@ export interface AirtableActivity {
 
 // ─── Constants ─────────────────────────────────────────────────────────────
 const JSON_URL =
-  "https://raw.githubusercontent.com/SEU-USUARIO/SEU-REPO/main/data.json";
+  "https://raw.githubusercontent.com/fernandapugliero/rausmi/main/data.json";
 
 const DAY_MAP: Record<string, number> = {
   Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3,
