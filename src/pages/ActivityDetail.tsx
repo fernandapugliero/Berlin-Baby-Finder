@@ -16,7 +16,8 @@ const ActivityDetail = () => {
     queryKey: ["activity", id],
     queryFn: async () => {
       const all = await fetchAllActivities();
-      return all.find((a) => a.id === id) ?? null;
+      // Match by exact id or by id prefix (occurrence ids have __suffix)
+      return all.find((a) => a.id === id || a.id.startsWith(id + "__")) ?? null;
     },
     enabled: !!id,
   });
