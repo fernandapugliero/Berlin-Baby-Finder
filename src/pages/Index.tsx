@@ -126,7 +126,7 @@ const Index = () => {
           {!hasSearched && (
             <section className="pt-6 pb-2 text-center">
               <h2 className="font-display font-bold text-4xl md:text-5xl leading-[1.15] text-foreground tracking-tight">
-                Was du <span className="hero-highlight">jetzt</span> mit Kindern in Berlin machen kannst.
+                Was du <span className="hero-highlight">jetzt</span> mit Kindern in Berlin machen kannst
               </h2>
             </section>
           )}
