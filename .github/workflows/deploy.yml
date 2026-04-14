@@ -34,6 +34,16 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: List dist files
+        run: |
+          echo "=== dist contents ==="
+          find dist -maxdepth 2 -type f | sort
+
+      - name: Show built index.html
+        run: |
+          echo "=== first lines of dist/index.html ==="
+          head -40 dist/index.html
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
