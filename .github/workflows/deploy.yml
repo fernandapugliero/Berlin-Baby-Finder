@@ -40,6 +40,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      # 🔥 garante que o domínio está dentro do artifact
+      - name: Add custom domain CNAME
+        run: echo "rausmi.com" > dist/CNAME
+
+      # 🔍 debug — confirma que o CNAME está lá
       - name: List dist files
         run: |
           echo "=== dist contents ==="
@@ -52,9 +57,6 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
-
-      - name: Add custom domain CNAME
-        run: echo "rausmi.com" > dist/CNAME
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
