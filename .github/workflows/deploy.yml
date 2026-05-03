@@ -53,6 +53,9 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Add custom domain CNAME
+        run: echo "rausmi.com" > dist/CNAME
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
